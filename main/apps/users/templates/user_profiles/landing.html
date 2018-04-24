@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        {% load static %}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Liability</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css'%}">
+        <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/form-elements.css' %}">
+        <link rel="stylesheet" href="{% static 'css/landing_style.css' %}">
+
+        <!-- Favicon and touch icons -->
+        <link rel="shortcut icon" href="{% static '/ico/favicon.png'%}">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static 'ico/apple-touch-icon-144-precomposed.png' %}">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href=" {% static 'ico/apple-touch-icon-114-precomposed.png' %}">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static 'ico/apple-touch-icon-72-precomposed.png' %}">
+        <link rel="apple-touch-icon-precomposed" href="{% static 'ico/apple-touch-icon-57-precomposed.png' %}">
+
+    </head>
+
+    <body>
+        <!-- Top content -->
+        <div class="top-content">
+        	
+            <div class="inner-bg">
+                <div class="container">
+                	
+                    <div class="row">
+                        <div class="col-sm-8 col-sm-offset-2 text">
+                        	<h1><img src="{% static 'img/logos/logo-xs-2.png' %}"></h1>
+                            <h1>The Game of <strong>Liability</strong></h1>
+                            <div class="description">
+                            	<p>
+	                            	Turn your friends' <strong>liabilities</strong> into your <strong>assets!</strong>
+                            	</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-sm-5">
+                        	
+                        	<div class="form-box">
+	                        	<div class="form-top">
+	                        		<div class="form-top-left">
+	                        			<h3>Login</h3>
+	                            		<p>Login to play Liability!</p>
+	                            		<ul class="form-error">
+											{% for k, v in login_errors.items %}
+												<li>{{v}}</li>
+											{% endfor %}
+										</ul>
+	                        		</div>
+	                        		<div class="form-top-right">
+	                        			<i class="fa fa-lock"></i>
+	                        		</div>
+	                            </div>
+	                            <div class="form-bottom">
+				                    <form role="form" action="/login" method="post" class="login-form"> {% csrf_token %}
+				                    	<div class="form-group">
+				                    		<label class="sr-only" for="login-username">Username</label>
+				                        	<input type="text" name="login-username" placeholder="Username..." class="form-username form-control" id="login-username">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="form-password">Password</label>
+				                        	<input type="password" name="login-password" placeholder="Password..." class="form-password form-control" id="login-password">
+				                        </div>
+				                        <button type="submit" class="btn">Sign in!</button>
+				                    </form>
+			                    </div>
+		                    </div>
+		                
+		                	<div class="social-login">
+	                        	<h3>...or login with:</h3>
+	                        	<div class="social-login-buttons">
+		                        	<a class="btn btn-link-2" href="#">
+		                        		<i class="fa fa-facebook"></i> Facebook
+		                        	</a>
+		                        	<a class="btn btn-link-2" href="#">
+		                        		<i class="fa fa-twitter"></i> Twitter
+		                        	</a>
+		                        	<a class="btn btn-link-2" href="#">
+		                        		<i class="fa fa-google-plus"></i> Google Plus
+		                        	</a>
+	                        	</div>
+	                        </div>
+	                        
+                        </div>
+                        
+                        <div class="col-sm-1 middle-border"></div>
+                        <div class="col-sm-1"></div>
+                        	
+                        <div class="col-sm-5">
+                        	
+                        	<div class="form-box">
+                        		<div class="form-top">
+	                        		<div class="form-top-left">
+	                        			<h3>Register</h3>
+	                            		<p>Register to play Liability!</p>
+	                            		<ul class="form-error">
+											{% for k, v in register_errors.items %}
+												<li>{{v}}</li>
+											{% endfor %}
+										</ul>
+	                        		</div>
+	                        		<div class="form-top-right">
+	                        			<i class="fa fa-pencil"></i>
+	                        		</div>
+	                            </div>
+	                            <div class="form-bottom">
+				                    <form role="form" action="/register" method="post" class="registration-form">{% csrf_token %}
+				                    	<div class="form-group">
+				                    		<label class="sr-only" for="form-first-name">First name</label>
+				                        	<input type="text" name="form-first-name" placeholder="First name..." class="form-first-name form-control" id="form-first-name" required>
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="form-last-name">Last name</label>
+				                        	<input type="text" name="form-last-name" placeholder="Last name..." class="form-last-name form-control" id="form-last-name" required>
+				                        </div>
+				                        <div class="form-group">
+				                     		<p class="form-error" id="email-registered"></p>
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="form-email">Email</label>
+				                        	<input type="text" name="form-email" placeholder="Email..." class="form-username form-control" id="form-email" required>
+				                        </div>
+				                        <div class="form-group">
+				                     		<p class="form-error" id="username-taken"></p>
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="form-username">Username</label>
+				                        	<input type="text" name="form-username" pattern=".{3,16}"   required title="Must be 3 to 16 characters" placeholder="Username..." class="form-username form-control" id="form-username">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="form-password">Password</label>
+				                        	<input type="password" name="form-password" pattern=".{8,16}"   required title="Must be 8 to 16 characters" placeholder="Password..." class="form-password form-control" id="form-password">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="form-confirm">Confirm Password</label>
+				                        	<input type="password" name="form-confirm" placeholder="Confirm password..." class="form-password form-control" id="form-confirm" required title="Please confirm your password.">
+				                        </div>
+				                        
+				                        <button type="submit" class="btn">Sign me up!</button>
+				                    </form>
+			                    </div>
+                        	</div>
+                        	
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Footer -->
+        <footer>
+        	<div class="container">
+        		<div class="row">
+        			
+        			<div class="col-sm-8 col-sm-offset-2">
+        				<div class="footer-border"></div>
+        			</div>
+        			
+        		</div>
+        	</div>
+        </footer>
+
+        <!-- Javascript -->
+        <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+        <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/jquery.backstretch.min.js' %}"></script>
+        <script src="{% static 'js/landing_scripts.js' %}"></script>
+
+    </body>
+
+</html>
