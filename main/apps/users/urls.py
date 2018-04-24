@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
 	re_path('^$', views.index),
+	re_path('^lobby$', views.lobby),
 	re_path('^register$', views.register),
 	re_path('^login$', views.login),
 	re_path('^username_validation/(?P<username>.*)$', views.check_username),

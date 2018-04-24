@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.shortcuts import render, redirect, HttpResponse
+from bcrypt import hashpw, gensalt
 from .models import *
 
 # Create your views here.
@@ -39,6 +40,7 @@ def register(request):
 		pw = hashpw(request.POST['form-password'].encode(), salt)
 		User.objects.create(f_name = request.POST['form-first-name'], l_name = request.POST['form-last-name'], user_name = request.POST['form-username'], email = request.POST['form-email'], sw = salt, pw = pw)
 		request.session['id'] = User.objects.get(user_name=request.POST['form-username']).id
+		request.session.modified=True
 		return redirect(lobby)
 	return redirect(index)
 
@@ -48,6 +50,11 @@ def login(request):
 		if len(User.objects.filter(user_name=request.POST['login-username'])):
 			user = User.objects.get(user_name=request.POST['login-username'])
 			pw = user.pw
+			print(user.sw)
+			print(gensalt())
+			print(request.POST['login-password'])
+			print(user.pw)
+			print(hashpw(request.POST['login-password'].encode(), user.sw.encode()))
 			if hashpw(request.POST['login-password'].encode(), user.sw.encode()) == pw:
 				request.session['id'] = User.objects.get(user_name=request.POST['login-username']).id
 				return redirect(lobby)

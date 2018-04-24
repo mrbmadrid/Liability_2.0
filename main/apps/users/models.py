@@ -93,11 +93,14 @@ class Cell(models.Model):
 	neighborhood = models.IntegerField(default=0)
 	owner = models.ForeignKey(Player_Profile, related_name="cells_owned", on_delete=models.PROTECT)
 	game = models.ForeignKey(Game, related_name="cells", on_delete=models.PROTECT)
+	modified = models.BooleanField(default=False)
 	updated_at = models.DateTimeField(auto_now=True)
 
 	def game_data(self):
-
-
+		if self.modifield:
+			set_cell_economy()
+			self.modified = False
+			self.save()
 		return {
 		"pos" : pos,
 		"q_1" : q_1,
