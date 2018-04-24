@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.shortcuts import render, redirect, HttpResponse
-from bcrypt import hashpw, gensalt
+from bcrypt import hashpw, gensalt, checkpw
 from .models import *
 
 # Create your views here.
@@ -9,10 +9,11 @@ from .models import *
 
 def index(request):
 	if not 'id' in request.session:
-		return render(request, "user_profiles/landing.html")
+		return render(request, "users/landing.html")
 	return redirect(lobby) #redirect to lobby if logged in
 
 def lobby(request):
+	request.session.clear()
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
 	return HttpResponse("Placeholder for lobby.")
@@ -31,14 +32,14 @@ def register(request):
 		if len(User.objects.filter(user_name=request.POST['form-username'])):
 			register_errors['username_duplicate'] = request.POST['form-username'] + " This username is not available."
 		if len(register_errors):
-			return render(request, "user_profiles/landing.html", {'register_errors' : register_errors})
+			return render(request, "users/landing.html", {'register_errors' : register_errors})
 		register_errors = User.objects.reg_validator(request.POST)
 		if len(register_errors):
 			print(register_errors)
-			return render(request, "user_profiles/landing.html", {'register_errors' : register_errors})
-		salt = gensalt()
-		pw = hashpw(request.POST['form-password'].encode(), salt)
-		User.objects.create(f_name = request.POST['form-first-name'], l_name = request.POST['form-last-name'], user_name = request.POST['form-username'], email = request.POST['form-email'], sw = salt, pw = pw)
+			return render(request, "users/landing.html", {'register_errors' : register_errors})
+		sw = gensalt();
+		pw = hashpw(request.POST['form-password'].encode(), sw).decode('utf-8')
+		User.objects.create(f_name = request.POST['form-first-name'], l_name = request.POST['form-last-name'], user_name = request.POST['form-username'], email = request.POST['form-email'], sw = sw, pw = pw)
 		request.session['id'] = User.objects.get(user_name=request.POST['form-username']).id
 		request.session.modified=True
 		return redirect(lobby)
@@ -49,20 +50,15 @@ def login(request):
 	if request.POST:
 		if len(User.objects.filter(user_name=request.POST['login-username'])):
 			user = User.objects.get(user_name=request.POST['login-username'])
-			pw = user.pw
 			print(user.sw)
-			print(gensalt())
-			print(request.POST['login-password'])
-			print(user.pw)
-			print(hashpw(request.POST['login-password'].encode(), user.sw.encode()))
-			if hashpw(request.POST['login-password'].encode(), user.sw.encode()) == pw:
+			if checkpw(request.POST['login-password'].encode(), user.pw.encode()):
 				request.session['id'] = User.objects.get(user_name=request.POST['login-username']).id
 				return redirect(lobby)
 			else:
 				login_errors['exists'] = "Check your username or password."
 		else:
 			login_errors['exists'] = "Check your username or password."
-	return render(request, "user_profiles/landing.html", {'login_errors':login_errors})
+	return render(request, "users/landing.html", {'login_errors':login_errors})
 
 
 

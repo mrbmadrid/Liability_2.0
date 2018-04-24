@@ -32,11 +32,11 @@ class UserManager(models.Manager):
 
 class User(models.Model):
 	user_name = models.CharField(max_length=16, unique=True)
-	f_name= models.CharField(max_length=15)
-	l_name= models.CharField(max_length=15)
-	email= models.CharField(max_length=60, unique=True)
-	sw= models.CharField(max_length=255)
-	pw= models.CharField(max_length=255)
+	f_name = models.CharField(max_length=15)
+	l_name = models.CharField(max_length=15)
+	email = models.CharField(max_length=60, unique=True)
+	sw = models.CharField(max_length=255)
+	pw = models.CharField(max_length=255)
 	joined_date = models.DateTimeField(auto_now_add=True)
 	objects = UserManager()
 
