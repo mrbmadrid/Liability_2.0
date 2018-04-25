@@ -14,11 +14,12 @@
 
 </head>
 <body>
+    {% csrf_token %}
     <form action="/logout">
         <input type="submit" value="Logout">
     </form>
     <div id="view"></div>
-
+    <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
     <script src="{% static 'js/ThreeJS/three.js' %}"></script>
     <script src="{% static 'js/ThreeJS/OrbitControls.js' %}"></script>
 
