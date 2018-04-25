@@ -56,6 +56,24 @@ class hx_Grid {
         };
     }
 
+    strip(){
+        var stripped_grid = {};
+        for(var cell in this.cells){
+            var c = this.cells[cell]
+            var pos, gamedata,id, info, key;
+            pos = c.hx_cell.Cell.pos;
+            key = String(pos.x) + "," + String(pos.y)
+            gamedata = c.hx_tile.gamedata;
+            info = {
+                'pos':pos,
+                'game-data':gamedata,
+                'id':id
+            }
+            stripped_grid[key] = info;
+        }
+        return stripped_grid;
+    }
+
     get grid(){
         return this.cells;
     }

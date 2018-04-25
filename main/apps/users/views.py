@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect, HttpResponse
 from bcrypt import hashpw, gensalt, checkpw
 from .models import *
-
+import json
 # Create your views here.
 
 
@@ -106,4 +106,10 @@ def get_game_data(request, game_id):
 def create_game(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
+
+	data = json.loads(request.body)
+	
+	print(data['data']['6,6'])
+
+	return HttpResponse('test')
 
