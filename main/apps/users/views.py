@@ -106,6 +106,7 @@ def get_game_data(request, game_id):
 def create_game(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
+	print(request.POST)
 
 	data = json.loads(request.body)
 	
