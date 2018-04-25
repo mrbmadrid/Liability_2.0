@@ -87,20 +87,22 @@ def get_game_data(request, game_id):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
 	game = Game.objects.get(id=game_id)
-	c = Cell.objects.filter(game_id=game_id)
 	p = Player_Profile.objects.filter(game_id=game_id)
-	cells = {}
-	for cell in c:
-		cells[cell.pos] = cell.game_data()
-	players = {}
-	for player in p:
-		players[player.player.name] = player.game_data()
-	data = {
-	"game" : game.game_data(),
-	"cells" : cells,
-	"players" : players
-	}
-	return HttpResponse(json.dumps(data))
+	if(len(p.filter(player_id=request.session['id']))):
+		c = Cell.objects.filter(game_id=game_id)
+		cells = {}
+		for cell in c:
+			cells[cell.pos] = cell.game_data()
+		players = {}
+		for player in p:
+			players[player.player.name] = player.game_data()
+		data = {
+		"game" : game.game_data(),
+		"cells" : cells,
+		"players" : players
+		}
+		return HttpResponse(json.dumps(data))
+	return redirect(lobby)
 
 
 def create_game(request):
