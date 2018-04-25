@@ -8,5 +8,6 @@ urlpatterns = [
 	re_path('^login$', views.login),
 	re_path('^username_validation/(?P<username>.*)$', views.check_username),
 	re_path('^email_validation/(?P<email>.*)$', views.check_email),
-	re_path('^game/(?P<game_id>\d+)$', views.get_game_data)
+	re_path('^game/(?P<game_id>\d+)$', views.get_game_data),
+	re_path('^game/create$', views.create_game)
 ]
