@@ -13,10 +13,9 @@ def index(request):
 	return redirect(lobby) #redirect to lobby if logged in
 
 def lobby(request):
-	request.session.clear()
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
-	return HttpResponse("Placeholder for lobby.")
+	return render(request, "index.html")
 
 
 '''
@@ -37,7 +36,7 @@ def register(request):
 		if len(register_errors):
 			print(register_errors)
 			return render(request, "users/landing.html", {'register_errors' : register_errors})
-		sw = gensalt();
+		sw = gensalt()
 		pw = hashpw(request.POST['form-password'].encode(), sw).decode('utf-8')
 		User.objects.create(f_name = request.POST['form-first-name'], l_name = request.POST['form-last-name'], user_name = request.POST['form-username'], email = request.POST['form-email'], sw = sw, pw = pw)
 		request.session['id'] = User.objects.get(user_name=request.POST['form-username']).id
@@ -60,7 +59,10 @@ def login(request):
 			login_errors['exists'] = "Check your username or password."
 	return render(request, "users/landing.html", {'login_errors':login_errors})
 
-
+def logout(request):
+	if 'id' in request.session:
+		request.session.pop('id', None)
+	return redirect(index)
 
 
 
