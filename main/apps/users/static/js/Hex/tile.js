@@ -17,9 +17,9 @@ class hx_Tile {
             'players': [],
         }
         this.Hexgeometry =new THREE.CylinderBufferGeometry( 1, 1, .5, 6 );
-        this.Hexmaterial = new THREE.MeshBasicMaterial( {color: this.color} );
+        this.Hexmaterial = new THREE.MeshLambertMaterial( {color: this.color} );
         this.Tile = new THREE.Mesh( this.Hexgeometry, this.Hexmaterial );
-    
+        this.Tile.receiveShadow = true;
         this.WireframeGeometry = new THREE.EdgesGeometry( this.Tile.geometry ); // or WireframeGeometry
         this.WireframeMat = new THREE.LineBasicMaterial( { color: 0x000000, linewidth: 2 } );
         this.Wireframe = new THREE.LineSegments( this.WireframeGeometry, this.WireframeMat );

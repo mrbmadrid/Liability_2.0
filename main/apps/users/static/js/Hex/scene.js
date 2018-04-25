@@ -86,8 +86,9 @@ class hx_Scene {
             }
 
             intersects[ intersects.length-1 ].object.selected = !intersects[ intersects.length-1 ].object.selected;
-
+            console.log(intersects[ intersects.length-1 ]);
             console.log(intersects[ intersects.length-1 ].object.pos);
+            console.log(intersects[ intersects.length-1 ].point, intersects[ intersects.length-1 ].object.getWorldPosition());
 
             this.hx_scene.cellNeighbor(intersects[ intersects.length-1 ].object.pos, false)
             
@@ -100,7 +101,7 @@ class hx_Scene {
                     intersects[ intersects.length-1 ].object.material.color.set( 0xFF0000 );
                 }else{ //if a tile turn transparent
                     var geometry = new THREE.BoxBufferGeometry( .2, .5, .2 );
-                    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+                    var material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
                     var cubeA = new THREE.Mesh( geometry, material );
 
                     if(this.AStar = true){
@@ -132,6 +133,8 @@ class hx_Scene {
                         var t = intersects[ intersects.length-1 ].object
                         var offset = t.width*.25
                         cubeA.position.set(t.position.x+.25, 0.5 , t.position.z-.25)
+                        cubeA.castShadow = true; //default is false
+                        cubeA.receiveShadow = false; //default
                         this.scene.add(cubeA);
                         hx_grid.grid[key].hx_tile.gamedata['children'].buildings.push(cubeA);
                         //console.log(hx_grid.grid[key])
