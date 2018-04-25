@@ -1,0 +1,17 @@
+body { margin: 0; overflow: hidden;}
+canvas{
+    width:80%;
+    height:80%;
+    outline:1px solid red;
+}
+#view {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+}
+form{
+    width:25%;
+    text-align: right;
+    float:right;
+}
