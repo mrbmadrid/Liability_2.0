@@ -137,6 +137,7 @@ class Cell(models.Model):
 		self.travel_cost = cell_economy['travel_cost']
 		self.stay_cost = cell_economy['stay_cost']
 		self.residual_income = cell_economy['income']
+		self.save()
 
 	def get_quadrant_mod(self):
 		quadrant_mod = [1, 1, 1]

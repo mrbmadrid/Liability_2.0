@@ -107,4 +107,6 @@ def create_game(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
 	print(request.POST)
+	#make game
+	return HttpResponse("I need to do something with the data you gave. TTYL")
 
