@@ -88,7 +88,7 @@ class Cell(models.Model):
 	travel_cost = models.IntegerField(default=100)
 	stay_cost = models.IntegerField(default=500)
 	residual_income = models.IntegerField(default=500)
-	height = models.IntegerField(default=0.5)
+	height = models.FloatField(default=0.5)
 	neighborhood = models.IntegerField(default=0)
 	owner = models.ForeignKey(Player_Profile, related_name="cells_owned", on_delete=models.PROTECT, null=True)
 	game = models.ForeignKey(Game, related_name="cells", on_delete=models.PROTECT)
