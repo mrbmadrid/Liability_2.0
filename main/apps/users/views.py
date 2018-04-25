@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect, HttpResponse
 from bcrypt import hashpw, gensalt, checkpw
 from .models import *
-
+import json
 # Create your views here.
 
 
@@ -109,4 +109,10 @@ def create_game(request):
 	print(request.POST)
 	#make game
 	return HttpResponse("I need to do something with the data you gave. TTYL")
+
+	data = json.loads(request.body)
+	
+	print(data['data']['6,6'])
+
+	return HttpResponse('test')
 
