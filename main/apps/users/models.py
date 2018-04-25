@@ -44,18 +44,17 @@ class Game(models.Model):
 	name = models.CharField(max_length=25, default="No Name")
 	turn = models.IntegerField(default=0)
 	board_length = models.IntegerField(default=10)
-	num_players = models.IntegerField()
-	waiting_to_finish_turn = models.IntegerField()
+	num_players = models.IntegerField(default=8)
+	waiting_to_finish_turn = models.IntegerField(default=8)
 	created_at = models.DateTimeField(auto_now_add=True)
-	created_by = models.ForeignKey(User, related_name="created_games", on_delete=models.CASCADE)
-	state = models.CharField(max_length=255)
+	created_by = models.ForeignKey(User, related_name="created_games", on_delete=models.PROTECT)
 
 	def game_data(self):
 		return {
-		"name" : name,
-		"turn" : turn,
-		"length" : board_length,
-		"num_players" : num_players,
+		"name" : self.name,
+		"turn" : self.turn,
+		"length" : self.board_length,
+		"num_players" : self.num_players,
 		}
 	
 
@@ -74,10 +73,10 @@ class Player_Profile(models.Model):
 
 	def game_data(self):
 		return {
-		"name" : player.user_name,
-		"pos" : pos,
-		"turn" : turn,
-		"balance" : account_balance
+		"name" : self.player.user_name,
+		"pos" : self.pos,
+		"turn" : self.turn,
+		"balance" : self.account_balance
 		}
 
 class Cell(models.Model):
@@ -91,29 +90,10 @@ class Cell(models.Model):
 	residual_income = models.IntegerField(default=500)
 	height = models.IntegerField(default=0.5)
 	neighborhood = models.IntegerField(default=0)
-	owner = models.ForeignKey(Player_Profile, related_name="cells_owned", on_delete=models.PROTECT)
+	owner = models.ForeignKey(Player_Profile, related_name="cells_owned", on_delete=models.PROTECT, null=True)
 	game = models.ForeignKey(Game, related_name="cells", on_delete=models.PROTECT)
 	modified = models.BooleanField(default=False)
 	updated_at = models.DateTimeField(auto_now=True)
-
-	def game_data(self):
-		if self.modifield:
-			set_cell_economy()
-			self.modified = False
-			self.save()
-		return {
-		"pos" : pos,
-		"q_1" : q_1,
-		"q_2" : q_2,
-		"q_3" : q_3,
-		"q_4" : q_4,
-		"travel_cost" : travel_cost,
-		"stay_cost" : stay_cost,
-		"residual_income" : residual_income,
-		"h" : height,
-		"nh" : nieghborhood,
-		"owner" : owner.player.user_name,
-		}
 
 	'''
 		Takes a cell model object and returns a dict of values representing the
@@ -127,10 +107,10 @@ class Cell(models.Model):
 			"income" : 500.0
 		}	
 		for count in range(0, self.neighborhood): #Modify economy based on neighborhood
-			cell_economy['occupy_cost'] *= 1.2
+			cell_economy['stay_cost'] *= 1.2
 			cell_economy['travel_cost'] += 40
 			cell_economy['income'] += 50
-		quadrant_mod = get_quadrant_mod()
+		quadrant_mod = self.get_quadrant_mod()
 		cell_economy['stay_cost'] *= quadrant_mod[0]
 		cell_economy['travel_cost'] *= quadrant_mod[1]
 		cell_economy['income'] *= quadrant_mod[2]
@@ -141,21 +121,21 @@ class Cell(models.Model):
 
 	def get_quadrant_mod(self):
 		quadrant_mod = [1, 1, 1]
-		building = get_modifiers[self.q_1]
+		building = self.get_modifiers(str(self.q_1))
 		for i in range(0, 3):
 			quadrant_mod[i] += building[i]
-		building = get_modifiers[self.q_2]
+		building = self.get_modifiers(str(self.q_2))
 		for i in range(0, 3):
 			quadrant_mod[i] += building[i]
-		building = get_modifiers[self.q_3]
+		building = self.get_modifiers(str(self.q_3))
 		for i in range(0, 3):
 			quadrant_mod[i] += building[i]
-		building = get_modifiers[self.q_4]
+		building = self.get_modifiers(str(self.q_4))
 		for i in range(0, 3):
 			quadrant_mod[i] += building[i]
 		return quadrant_mod
 
-	def get_modifiers(building):
+	def get_modifiers(self, building):
 		building_modifiers = {
 			"0" : [0, 0, 0], #empty
 			"1" : [-0.1, -0.2, 0.2], #Trailer Park
@@ -177,7 +157,30 @@ class Cell(models.Model):
 		}
 		return building_modifiers[building]
 
+	def game_data(self):
+		if self.modified:
+			self.set_cell_economy()
+			self.modified = False
+			self.save()
 
+		data = {
+		"pos" : {
+			'x': self.pos.split(',')[0],
+			'y': self.pos.split(',')[1],
+			'h': self.height
+		},
+		"buildings" : [self.q_1, self.q_2,self.q_3,self.q_4],
+		"travel_cost" : self.travel_cost,
+		"stay_cost" : self.stay_cost,
+		"residual_income" : self.residual_income,
+		"h" : self.height,
+		"nh" : self.neighborhood,
+		}
+		if self.owner:
+			data["owner"] = self.owner.player.user_name
+		else:
+			data["owner"] = "Unowned"
+		return data
 
 
 

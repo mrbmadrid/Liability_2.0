@@ -95,24 +95,25 @@ def get_game_data(request, game_id):
 	players = {}
 	for player in p:
 		players[player.player.name] = player.game_data()
-
-	return {
+	data = {
 	"game" : game.game_data(),
 	"cells" : cells,
 	"players" : players
 	}
+	return HttpResponse(json.dumps(data))
 
 
 def create_game(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
-	print(request.POST)
 	#make game
-	return HttpResponse("I need to do something with the data you gave. TTYL")
-
+	user = User.objects.get(id=request.session['id'])
 	data = json.loads(request.body)
-	
-	print(data['data']['6,6'])
-
+	game = Game.objects.create(created_by=user)
+	for k, v in data['data'].items():
+		if v['game-data']['neighborhood']:
+			Cell.objects.create(pos=k, neighborhood=v['game-data']['neighborhood'], game=game, modified=True)
+		else:
+			Cell.objects.create(pos=k, neighborhood=-1, game=game, modified=True)
 	return HttpResponse('test')
 
