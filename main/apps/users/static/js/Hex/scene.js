@@ -86,7 +86,7 @@ class hx_Scene {
             }
 
             intersects[ intersects.length-1 ].object.selected = !intersects[ intersects.length-1 ].object.selected;
-
+            console.log(intersects[ intersects.length-1 ]);
             console.log(intersects[ intersects.length-1 ].object.pos);
             console.log(intersects[ intersects.length-1 ].point, intersects[ intersects.length-1 ].object.getWorldPosition());
 
