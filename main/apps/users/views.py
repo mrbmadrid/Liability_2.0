@@ -15,7 +15,7 @@ def index(request):
 def lobby(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
-	return render(request, "index.html")
+	return render(request, "users/lobby.html")
 
 
 '''
