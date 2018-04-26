@@ -8,7 +8,43 @@ class hx_Board {
         this.Offset = Offset;
     }
 
-    generate(){
+    generate(data){
+        if(data != false){
+
+            for(var tile in data.cells){
+                var hxTile = new hx_Tile();
+                var Tile = hxTile.tile;
+                Tile.pos = data.cells[tile].pos
+                Tile.selected = false;
+                hxTile.gamedata = {
+                    'edgeCost': data.cells[tile].travel_cost,
+                    'neighborhood': data.cells[tile].nh,
+                    'stayCost': data.cells[tile].stay_cost,
+                    'for_sale': data.cells[tile].for_sale,
+                    'price':data.cells[tile].price,
+                    'residual_income': data.cells[tile].residual_income,
+                    'value': data.cells[tile].value,
+                    'owner': data.cells[tile].owner,
+                    'color': data.cells[tile].color,                 
+                }
+                hxTile.gamedata['children'] = {
+                    'buildings': data.cells[tile].buildings,
+                    'players': []
+                }
+                Tile.material.color.set(data.cells[tile].color)
+                this.add(hxTile)
+                var offset = 0;
+                if(Tile.pos.y % 2 != 0){
+                    offset = .9
+                }
+                Tile.position.set((Tile.pos.x*1.75+offset),0,Tile.pos.y*1.5)
+                hx_scene.add(Tile)
+            }
+
+            return;
+        }
+
+
         for(var i = this.Offset[0]; i < this.MaxLength+this.Offset[0]; i++){
             for(var j = this.Offset[1]; j < this.MaxWidth+this.Offset[1]; j++){
                 var hxTile = new hx_Tile();
@@ -111,6 +147,7 @@ class hx_Board {
                 hx_grid.grid[key].hx_tile.gamedata.neighborhood = nh;
                 assigned[hx_grid.grid[key]._id] = ""
                 this.Tiles[key].Tile.material.color.set(this.neighborhoods[nh].color)
+                this.Tiles[key].gamedata.color = this.neighborhoods[nh].color
                 size -= 1;
                 current = queue.dequeue().item;
             }

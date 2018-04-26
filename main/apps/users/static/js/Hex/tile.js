@@ -11,9 +11,15 @@ class hx_Tile {
             'edgeCost': 1,
             'neighborhood': null,
             'stayCost': 1,
+            'for_sale': true,
+            'price':0,
+            'residual_income': 0,
+            'value': 0,
+            'owner': null,
+            'color': null,
         }
         this.gamedata['children'] = {
-            'buildings': [],
+            'buildings': [0,0,0,0],
             'players': [],
         }
         this.Hexgeometry =new THREE.CylinderBufferGeometry( 1, 1, .5, 6 );

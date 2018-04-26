@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.shortcuts import render, redirect, HttpResponse
+from django.http import JsonResponse
 from bcrypt import hashpw, gensalt, checkpw
 from .models import *
 from django.db.models import Count
@@ -109,25 +110,38 @@ def join_public_game(request, size):
 		if game.player_profiles.count() == game.num_players:
 			game.turn = 1
 			game.save()
-		return HttpResponse("Success")
+		context = {
+			"game_id":game.id
+		}
+		return render(request,'game.html', context)
 	else:
-		game = Game.objects.create(created_by=user, num_players=size)
-		Player_Profile.objects.create(game=game, player=user, pos='0,0', account_balance=500000)
-		if size == 4:
+		if int(size) == 4:
+			game = Game.objects.create(created_by=user, num_players=size, board_width=6, board_length=6)
+			Player_Profile.objects.create(game=game, player=user, pos='0,0', account_balance=500000)
 			for count in range(0, 36):
 				Cell.objects.create(pos=str(int(count/6))+","+str(int(count%6)), neighborhood=-1, game=game, modified=True)
-			return HttpResponse(Cell.objects.filter(game=game))
-		elif size == 8:
+		elif int(size) == 8:
+			game = Game.objects.create(created_by=user, num_players=size, board_width=10, board_length=10)
+			Player_Profile.objects.create(game=game, player=user, pos='0,0', account_balance=500000)
 			for count in range(0, 100):
 				Cell.objects.create(pos=str(int(count/10))+","+str(int(count%10)), neighborhood=-1, game=game, modified=True)
-			return HttpResponse(Cell.objects.filter(game=game))
+
+		context = {
+			"game_id":game.id
+		}
+		return render(request,'game.html', context)
 
 '''
 	Game Submission/Update/Validation
 '''
-def get_game_data(request, game_id):
+def get_game_data(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
+
+
+	data = json.loads(request.body)
+	print(data)
+	game_id = data['id']
 	game = Game.objects.get(id=game_id)
 	p = Player_Profile.objects.filter(game_id=game_id)
 	if(len(p.filter(player_id=request.session['id']))):
@@ -137,28 +151,39 @@ def get_game_data(request, game_id):
 			cells[cell.pos] = cell.game_data()
 		players = {}
 		for player in p:
-			players[player.player.name] = player.game_data()
+			players[player.player.user_name] = player.game_data()
 		data = {
 		"game" : game.game_data(),
 		"cells" : cells,
 		"players" : players
 		}
-		return HttpResponse(json.dumps(data))
+		return JsonResponse(data)
 	return redirect(lobby)
 
+def join_game(request, game_id):
+	context = {
+		"game_id":game_id
+	}
+	return render(request,'game.html', context)
 
 def create_game(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
+	return render(request,'_game.html')
+
+def create_game_data(request):
+	if not 'id' in request.session: #redirect to landing if not logged in
+		return redirect(index)
 	#make game
+	print('create game data')
 	user = User.objects.get(id=request.session['id'])
 	data = json.loads(request.body)
-	game = Game.objects.create(created_by=user)
+	game = Game.objects.create(created_by=user,board_width=6, board_length=6)
 	Player_Profile.objects.create(player=user, game=game, pos="0,0", account_balance=500000)
 	for k, v in data['data'].items():
 		if v['game-data']['neighborhood']:
 			Cell.objects.create(pos=k, neighborhood=v['game-data']['neighborhood'], game=game, color=v['game-data']['color'], modified=True)
 		else:
 			Cell.objects.create(pos=k, neighborhood=-1, game=game, color=v['game-data']['color'], modified=True)
-	return HttpResponse('test')
+	return JsonResponse({'game_id':game.id})
 
