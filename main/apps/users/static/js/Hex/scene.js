@@ -5,8 +5,7 @@ class hx_Scene {
         this._scene = new THREE.Scene();
         this._camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
         this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        this._renderer.setSize( window.innerWidth*.75, window.innerHeight*.75);
-
+        this._renderer.setSize( document.getElementById('gameView').offsetWidth, document.getElementById('gameView').offsetHeight);
         this.controls = new THREE.OrbitControls( this._camera );
         this.controls.update();
         this.raycaster = new THREE.Raycaster();
@@ -24,7 +23,7 @@ class hx_Scene {
 
 
 
-        document.body.appendChild( this._renderer.domElement );
+        document.getElementById('gameView').appendChild( this._renderer.domElement );
 
         window.addEventListener( 'resize', this.onWindowResize, false );
         window.addEventListener( 'mousemove', this.onMouseMove, false );
@@ -63,7 +62,7 @@ class hx_Scene {
         this.hx_scene.camera.aspect = window.innerWidth / window.innerHeight;
         this.hx_scene._camera.updateProjectionMatrix();
     
-        this.hx_scene._renderer.setSize( window.innerWidth*.75, window.innerHeight*.75 );
+        this.hx_scene._renderer.setSize( document.getElementById('gameView').offsetWidth, window.innerHeight*.75 );
     
     }
 

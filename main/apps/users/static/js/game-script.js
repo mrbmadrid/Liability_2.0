@@ -1,33 +1,35 @@
+//Adjust AJAX calls to validate with DJANGO//
+$.ajaxSetup({ 
+    beforeSend: function(xhr, settings) {
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+            // Only send the token to relative URLs i.e. locally.
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        }
+    } 
+});
+//-----END-----//
+
+
 var hx_scene,hx_grid,hx_board;
 hx_scene = new hx_Scene();
 
 Init();
 function Init(){
-
-    $.ajaxSetup({ 
-        beforeSend: function(xhr, settings) {
-            function getCookie(name) {
-                var cookieValue = null;
-                if (document.cookie && document.cookie != '') {
-                    var cookies = document.cookie.split(';');
-                    for (var i = 0; i < cookies.length; i++) {
-                        var cookie = jQuery.trim(cookies[i]);
-                        // Does this cookie string begin with the name we want?
-                        if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-            if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                // Only send the token to relative URLs i.e. locally.
-                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-            }
-        } 
-   });
-
     $.ajax({
         type:'POST',
         url: '/get_game_data',
@@ -44,10 +46,6 @@ function Init(){
             RenderGame(response);
         },
     });
-
-    //RenderHexDemo();
-
-    //console.log(hx_grid.grid);
 }
 function RenderGame(data){
 
@@ -75,7 +73,7 @@ function RenderGame(data){
     
     var sphereSize = 50;
     var pointLightHelper = new THREE.PointLightHelper( light, sphereSize );
-    hx_scene.add( pointLightHelper );
+    //hx_scene.add( pointLightHelper );
     
     hx_scene.loader().load(
         // resource URL
@@ -126,3 +124,25 @@ var gameLoop = function(){
 
 gameLoop();
 
+
+//PLAYER ACTION EVEN LISTENERS//
+$('#DiceRoll').on('click', RollTheDice)
+
+//AJAX CALL FUNCTIONS FOR PLAYER ACTION//
+function RollTheDice(){
+    $.ajax({
+        type:'POST',
+        url: '/roll/'+$('#Game_ID').val(),
+        data : JSON.stringify({
+            'function': 'dice_roll',
+            game_id : $('#Game_ID').val(),
+            csrfmiddlewaretoken : '{% csrf_token %}'
+        }),
+        cache: false,
+        contentType: false,
+        processData: true,
+        success: function(response){
+            console.log(response);
+        },
+    });
+}
