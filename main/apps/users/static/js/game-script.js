@@ -143,6 +143,7 @@ function RollTheDice(){
         processData: true,
         success: function(response){
             console.log(response);
+            hx_scene.roll(parseInt(response.roll));
         },
     });
 }
