@@ -132,9 +132,9 @@ $('#DiceRoll').on('click', RollTheDice)
 function RollTheDice(){
     $.ajax({
         type:'POST',
-        url: '/roll/'+$('#Game_ID').val(),
+        url: '/action',
         data : JSON.stringify({
-            'function': 'dice_roll',
+            'function': 'roll',
             game_id : $('#Game_ID').val(),
             csrfmiddlewaretoken : '{% csrf_token %}'
         }),
