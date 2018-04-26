@@ -187,3 +187,21 @@ def create_game_data(request):
 			Cell.objects.create(pos=k, neighborhood=-1, game=game, color=v['game-data']['color'], modified=True)
 	return JsonResponse({'game_id':game.id})
 
+'''
+In-Play methods
+'''
+
+def dice_roll(request, game_id):
+	if not 'id' in request.session: #redirect to landing if not logged in
+		return redirect(index)
+	profile = Player_Profile.objects.get(player_id=request.session['id'], game_id=game_id)
+	game = Game.objects.get(id=game_id)
+	if str(game.turn) == profile.turn[1:len(profile.turn)]:
+		return JsonResponse({"roll": "You already rolled."})
+	else:
+		move = randint(1, 6)
+		profile.turn = str(move)+str(game.turn)
+		profile.save()
+		return JsonResponse({"roll":str(move)})
+
+
