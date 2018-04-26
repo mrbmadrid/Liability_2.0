@@ -43,6 +43,7 @@ def register(request):
 		pw = hashpw(request.POST['form-password'].encode(), sw).decode('utf-8')
 		User.objects.create(f_name = request.POST['form-first-name'], l_name = request.POST['form-last-name'], user_name = request.POST['form-username'], email = request.POST['form-email'], sw = sw, pw = pw)
 		request.session['id'] = User.objects.get(user_name=request.POST['form-username']).id
+		request.session['user_name'] = request.POST['form-username']
 		request.session.modified=True
 		return redirect(lobby)
 	return redirect(index)
@@ -141,7 +142,6 @@ def get_game_data(request):
 
 
 	data = json.loads(request.body)
-	print(data)
 	game_id = data['id']
 	game = Game.objects.get(id=game_id)
 	p = Player_Profile.objects.filter(game_id=game_id)
@@ -193,13 +193,25 @@ def create_game_data(request):
 In-Play methods
 '''
 
+def action(request):
+	if not 'id' in request.session: #redirect to landing if not logged in
+		return redirect(index)
+	data = json.loads(request.body)
+	profile = Player_Profile.objects.get(player_id=request.session['id'], game_id=game_id)
+	game = Game.objects.get(id=game_id)
+
+
 def dice_roll(request, game_id):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
 	profile = Player_Profile.objects.get(player_id=request.session['id'], game_id=game_id)
 	game = Game.objects.get(id=game_id)
 	if str(game.turn) == profile.move[1:len(profile.move)]:
-		return JsonResponse({"roll": "You already rolled."})
+		move = random.randint(1, 6)
+		profile.turn = str(move)+str(game.turn)
+		profile.save()
+		return JsonResponse({"roll":str(move)})
+		#return JsonResponse({"roll": "You already rolled."})
 	else:
 		move = random.randint(1, 6)
 		profile.turn = str(move)+str(game.turn)
