@@ -2,7 +2,7 @@ $(document).ready(function(){
 	$.getJSON( "/user/"+$("#user_id").val(), function(res) {
   		for(key in res['games']){
   			$("#player_games").append(
-  				 "<div class='row'><div class='col-sm-8'><a href='/game/"+key+"'>"+res['games'][key]['name']+"</a></div><div class='col-sm-2'>"+ res['games'][key]['turn'] +
+  				 "<div class='row'><div class='col-sm-8'><a href='/joingame/"+key+"'>"+res['games'][key]['name']+"</a></div><div class='col-sm-2'>"+ res['games'][key]['turn'] +
   				 "</div></div>"
   				)
   		}

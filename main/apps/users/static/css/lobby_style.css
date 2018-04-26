@@ -1,3 +1,5 @@
 #right_info_pane {
 	border-left: 2px solid black;
+	height: 400px;
+	overflow: scroll;
 }
