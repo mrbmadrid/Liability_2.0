@@ -5,8 +5,7 @@ class hx_Scene {
         this._scene = new THREE.Scene();
         this._camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
         this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        this._renderer.setSize( window.innerWidth*.75, window.innerHeight*.75);
-
+        this._renderer.setSize( window.innerWidth*.75, window.innerHeight*.75 );
         this.controls = new THREE.OrbitControls( this._camera );
         this.controls.update();
         this.raycaster = new THREE.Raycaster();
@@ -19,12 +18,15 @@ class hx_Scene {
             'A': null,
             'B': null
         }
+        this._roll = 0;
+        this.AStar_cooldown = false;
         this._loader = new THREE.JSONLoader();
         var green = new THREE.Color( 0x40C843 );
+        this.hover_path = null;
+        this.path_colors = null;
 
 
-
-        document.body.appendChild( this._renderer.domElement );
+        document.getElementById('gameView').appendChild( this._renderer.domElement );
 
         window.addEventListener( 'resize', this.onWindowResize, false );
         window.addEventListener( 'mousemove', this.onMouseMove, false );
@@ -58,6 +60,13 @@ class hx_Scene {
 
     }
 
+    roll(val){
+        this._roll = val;
+    }
+
+    get get_roll(){
+        return this._roll;
+    }
     onWindowResize(){
 
         this.hx_scene.camera.aspect = window.innerWidth / window.innerHeight;
@@ -73,6 +82,50 @@ class hx_Scene {
         var rect = this.hx_scene.renderer.domElement.getBoundingClientRect();
         this.hx_scene.mouse_.x = ( ( event.clientX - rect.left ) / ( rect.width - rect.left ) ) * 2 - 1;
         this.hx_scene.mouse_.y = - ( ( event.clientY - rect.top ) / ( rect.bottom - rect.top) ) * 2 + 1;
+
+        var intersects = this.hx_scene.raycaster.intersectObjects( this.hx_scene._scene.children );
+        if (intersects.length < 1)
+            return;
+        var x = intersects[ intersects.length-1 ].object.pos.x;
+        var y = intersects[ intersects.length-1 ].object.pos.y;
+        this.hx_scene.points['B'] = [x,y];
+
+        if(this.hx_scene.points['A'] == null || this.hx_scene.points['B'] == null)
+            return;
+
+        
+        if (this.AStar_cooldown == true)
+            return;
+
+        this.AStar_cooldown = true;
+
+        setInterval(function()
+        { 
+            this.AStar_cooldown = false;
+        }, 1500);
+
+
+        
+
+        if(this.path != null){
+            for(var cords in this.path){
+                var key = String(this.path[cords][0]) + "," + String(this.path[cords][1])
+                hx_grid.grid[key].hx_tile.Tile.material.color.set( this.path_colors[key] )
+            }            
+        }
+
+        var path = hx_grid.calculatePath(this.hx_scene.points['A'], this.hx_scene.points['B'],1,1);
+        var path_colors = {};
+        this.path = path;
+        for(var cords in path){
+            if(cords == 0)
+                continue;
+            var key = String(path[cords][0]) + "," + String(path[cords][1])
+            path_colors[key] = hx_grid.grid[key].hx_tile.gamedata.color
+            hx_grid.grid[key].hx_tile.Tile.material.color.set( 0x1DF800 )
+        }
+        console.log(path_colors);
+        this.path_colors = path_colors;
     }
 
     
@@ -107,6 +160,7 @@ class hx_Scene {
                     if(this.AStar = true){
                         this.StartMarker = !this.StartMarker;
                         if(!this.StartMarker){
+                            return;
                             intersects[ intersects.length-1 ].object.material.color.set( 0x0047FF );
                             var x,y;
                             x = intersects[ intersects.length-1 ].object.pos.x;
@@ -125,6 +179,12 @@ class hx_Scene {
                             x = intersects[ intersects.length-1 ].object.pos.x;
                             y = intersects[ intersects.length-1 ].object.pos.y;
                             this.hx_scene.points['A'] = [x,y];
+                            this.AStar_cooldown = true;
+
+                            setInterval(function()
+                            { 
+                                this.AStar_cooldown = false;
+                            }, 1500);
                         }
                         var pos = intersects[ intersects.length-1 ].object.pos
                         var key = String(pos.x) + "," + String(pos.y)

@@ -10,11 +10,11 @@ urlpatterns = [
 	re_path('^username_validation/(?P<username>.*)$', views.check_username),
 	re_path('^email_validation/(?P<email>.*)$', views.check_email),
 	re_path('^get_game_data$', views.get_game_data),
-	re_path('^joingame/(?P<game_id>\d+)$', views.join_game),
+	re_path('^loadgame/(?P<game_id>\d+)$', views.load_game),
 	re_path('^Create_Game$', views.create_game),
 	re_path('^Create_Game_Data$', views.create_game_data),
 	re_path('^user/(?P<id>\d+)$', views.user),
 	re_path('^join_public_game/(?P<size>\d)$', views.join_public_game),
-	re_path('^roll/(?P<game_id>\d+)$', views.dice_roll)
+	re_path('^action$', views.action)
 	
 ]

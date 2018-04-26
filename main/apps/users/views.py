@@ -106,17 +106,20 @@ def join_public_game(request, size):
 	user = User.objects.get(id=request.session['id'])
 	user_profiles = Player_Profile.objects.filter(player_id=user.id)
 	games = Game.objects.filter(turn__lte=0).exclude(player_profiles__in=user_profiles).annotate(player_count=Count('player_profiles')).filter(player_count__lte=size, num_players=size)
-	if len(games):
-		game = games.first()
-		Player_Profile.objects.create(player=user, game=game, pos="0,0", account_balance=500000)
-		if game.player_profiles.count() == game.num_players:
-			game.turn = 1
+	if len(games): #open public game exits so join
+		game = games.first() #get first open game
+		spawn = game.spawn_locations.split('_')[0] #get next spawn location
+		game.spawn_locations = game.spawn_locations[len(spawn)+1:len(game.spawn_locations)] #removed used spawn location
+		game.save()
+		Player_Profile.objects.create(player=user, game=game, pos=spawn, account_balance=500000) #add player
+		if game.player_profiles.count() == game.num_players: #check if players joined = number of players for game to start
+			game.turn = 1 #start game
 			game.save()
 		context = {
 			"game_id":game.id
 		}
 		return render(request,'game.html', context)
-	else:
+	else: #open public game does not exist so create
 		if int(size) == 4:
 			game = Game.objects.create(created_by=user, num_players=size, board_width=6, board_length=6)
 			Player_Profile.objects.create(game=game, player=user, pos='0,0', account_balance=500000)
@@ -161,7 +164,7 @@ def get_game_data(request):
 		return JsonResponse(data)
 	return redirect(lobby)
 
-def join_game(request, game_id):
+def load_game(request, game_id):
 	context = {
 		"game_id":game_id
 	}
@@ -179,8 +182,11 @@ def create_game_data(request):
 	print('create game data')
 	user = User.objects.get(id=request.session['id'])
 	data = json.loads(request.body)
-	game = Game.objects.create(created_by=user,board_width=6, board_length=6)
-	Player_Profile.objects.create(player=user, game=game, pos="0,0", account_balance=500000)
+	game = Game.objects.create(created_by=user,board_width=6, board_length=6, spawn_locations=data['spawns'])
+	spawn = game.spawn_locations.split('_')[0]
+	game.spawn_locations = game.spawn_locations[len(spawn)+1:len(game.spawn_locations)]
+	game.save()
+	Player_Profile.objects.create(player=user, game=game, pos=spawn, account_balance=500000)
 	for k, v in data['data'].items():
 		if v['game-data']['neighborhood']:
 			Cell.objects.create(pos=k, neighborhood=v['game-data']['neighborhood'], game=game, color=v['game-data']['color'], modified=True)
@@ -197,25 +203,25 @@ def action(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
 	data = json.loads(request.body)
-	profile = Player_Profile.objects.get(player_id=request.session['id'], game_id=game_id)
-	game = Game.objects.get(id=game_id)
-
-
-def dice_roll(request, game_id):
-	if not 'id' in request.session: #redirect to landing if not logged in
-		return redirect(index)
-	profile = Player_Profile.objects.get(player_id=request.session['id'], game_id=game_id)
-	game = Game.objects.get(id=game_id)
-	if str(game.turn) == profile.move[1:len(profile.move)]:
-		move = random.randint(1, 6)
-		profile.turn = str(move)+str(game.turn)
-		profile.save()
-		return JsonResponse({"roll":str(move)})
-		#return JsonResponse({"roll": "You already rolled."})
-	else:
-		move = random.randint(1, 6)
-		profile.turn = str(move)+str(game.turn)
-		profile.save()
-		return JsonResponse({"roll":str(move)})
+	profile = Player_Profile.objects.get(player_id=request.session['id'], game_id=data['game_id'])
+	game = Game.objects.get(id=data['game_id'])
+	if data['function'] == 'roll':
+		if str(game.turn) == profile.move[1:len(profile.move)]:
+			move = random.randint(1, 6)
+			profile.turn = str(move)+str(game.turn)
+			profile.save()
+			return JsonResponse({"roll":str(move)})
+			#return JsonResponse({"roll": "You already rolled."})
+		else:
+			move = random.randint(1, 6)
+			profile.turn = str(move)+str(game.turn)
+			profile.save()
+			return JsonResponse({"roll":str(move)})
+	elif data['function'] == 'purchase':
+		return HttpResponse("Purchase")
+	elif data['function'] == 'upgrade':
+		return HttpResponse("Upgrade")
+	elif data['function'] == 'move':
+		return HttpResponse("Move")
 
 
