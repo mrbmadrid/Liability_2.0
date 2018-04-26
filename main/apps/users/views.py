@@ -6,7 +6,6 @@ from bcrypt import hashpw, gensalt, checkpw
 from .models import *
 from django.db.models import Count
 import json, random
-
 # Create your views here.
 
 
@@ -187,6 +186,7 @@ def create_game_data(request):
 		else:
 			Cell.objects.create(pos=k, neighborhood=-1, game=game, color=v['game-data']['color'], modified=True)
 	return JsonResponse({'game_id':game.id})
+
 
 '''
 In-Play methods
