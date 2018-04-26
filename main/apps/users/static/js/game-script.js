@@ -51,15 +51,15 @@ function Init(){
 }
 function RenderGame(data){
 
-    hx_grid = new hx_Grid(data.game.length,data.game.length, [.5,1]);
-    hx_board = new hx_Board(data.game.length,data.game.length, [0,0]);
+    hx_grid = new hx_Grid(data.game.width,data.game.length, [.5,1]);
+    hx_board = new hx_Board(data.game.width,data.game.length, [0,0]);
     
     hx_grid.generate();
-    hx_board.generate();
+    hx_board.generate(data);
     hx_board.generateNeighborhoods(8, hx_board.boardSize)
-    console.log(hx_grid.grid['6,6']);
+    console.log(hx_grid.grid['3,3']);
     hx_scene.camera.position.set(20,30,20);
-    hx_scene.camera.lookAt(hx_grid.grid['6,6'].hx_cell.Cell.position)
+    hx_scene.camera.lookAt(hx_grid.grid['3,3'].hx_cell.Cell.position)
 
     hx_scene.renderer.shadowMap.enabled = true;
     hx_scene.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
