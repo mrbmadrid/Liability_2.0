@@ -15,6 +15,6 @@ urlpatterns = [
 	re_path('^Create_Game_Data$', views.create_game_data),
 	re_path('^user/(?P<id>\d+)$', views.user),
 	re_path('^join_public_game/(?P<size>\d)$', views.join_public_game),
-	re_path('^acion$', views.action)
+	re_path('^action$', views.action)
 	
 ]

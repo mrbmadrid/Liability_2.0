@@ -59,9 +59,6 @@
         <img class="user_icon" src="{% static 'img/logos/flat.jpg' %}">
       </nav>
 
-      <div class="container">
-
-
         <!-- Where the game view begins, kind of. -->
         <div id="view"></div>
         <input type="hidden" id = "Game_ID" value="{{game_id}}">
@@ -77,8 +74,21 @@
         <script src="{% static 'js/Hex/board.js' %}"></script>
         <script src="{% static 'js/Hex/cell.js' %}"></script>
         <script src="{% static 'js/Hex/tile.js' %}"></script>
-        <script src="{% static 'js/game-script.js' %}"></script>
         <!-- Where the game view actually ends. -->
+
+      <div class="wrapper">
+
+          <div id="gameView">
+
+          </div>
+          <div class="controls">
+              <form action="/logout">
+                  <input type="submit" value="Logout">
+              </form>
+              <button id="DiceRoll">Dice Roll</button>
+          </div>
+
+      <script src="{% static 'js/game-script.js' %}"></script>
 
       </div>
 
