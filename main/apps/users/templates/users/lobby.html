@@ -44,10 +44,10 @@
                       {{request.session.user_name}}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="#">Action</a>
-                      <a class="dropdown-item" href="#">Another action</a>
+                      <a class="dropdown-item" href="#">Profile</a>
+                      <a class="dropdown-item" href="#">Settings</a>
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">Something else here</a>
+                      <a class="dropdown-item" href="/logout">Logout</a>
                     </div>
                   </li>
                 </ul>
@@ -56,9 +56,9 @@
                         <a class="nav-link" href="/logout">Logout</a>
                     </li>
                 </ul>
-                    
               </div>
             </nav>
+            <!-- Main content area -->
             <div class="row">
                 <div class="col-md-8 col-sm-12" id="chat">
                     
@@ -70,16 +70,24 @@
                     </div>
                     <div class="row">
                         <div class="col" id="player_games">
-                            test
+                            <div class="row">
+                                <div class="col">
+                                    <h3>Joined Games</h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">Game Name</div>
+                                <div class="col-sm-2">Turn</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div id="quickplay_4">Quickplay_4</div> 
-                <!-- Quickplay 8 -->
-                <!-- Join custom game -->
-                <!-- Create custom game -->
+                <div class="col-md-2 col-sm-6 col-xs-12 btn btn-dark" id="quickplay_4">Quickplay 4</div> 
+                <div class="col-md-2 col-sm-6 col-xs-12 btn btn-dark" id="quickplay_8">Quickplay 8</div>
+                <div class="col-md-2 col-sm-6 col-xs-12 btn btn-dark" id="join_custom">Join Custom</div><input type="text" name="custom_game" id="custom_game_id_field" placeholder="Unique Key">
+                <div class="col-md-2 col-sm-12 col-xs-12 btn btn-dark" id="create_game">Create Game</div>
             </div>
             <input type="hidden" id="user_id" value="{{request.session.id}}">
         </div>

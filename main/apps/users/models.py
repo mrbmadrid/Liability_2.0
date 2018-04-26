@@ -97,6 +97,7 @@ class Cell(models.Model):
 	owner = models.ForeignKey(Player_Profile, related_name="cells_owned", on_delete=models.PROTECT, null=True)
 	game = models.ForeignKey(Game, related_name="cells", on_delete=models.PROTECT)
 	for_sale = models.BooleanField(default=True)
+	color = models.CharField(max_length=10, null=True)
 	modified = models.BooleanField(default=False)
 	updated_at = models.DateTimeField(auto_now=True)
 
@@ -188,6 +189,7 @@ class Cell(models.Model):
 		"residual_income" : self.residual_income,
 		"h" : self.height,
 		"nh" : self.neighborhood,
+		"color" : self.color
 		}
 		if self.owner:
 			data["owner"] = self.owner.player.user_name

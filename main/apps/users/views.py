@@ -88,10 +88,10 @@ def user(request, id):
 		return HttpResponse("Invalid user ID for request.")
 	data = {}
 	data['games']={}
-	games = Player_Profile.objects.filter(player_id=request.session['id']).select_related('game')
+	games = Game.objects.filter(player_profiles__in=Player_Profile.objects.filter(player_id=request.session['id']))
 	for game in games:
-		data['games'][game.name]={
-			'id' : game.id,
+		data['games'][game.id]={
+			'name' : game.name,
 			'waiting' : game.waiting_to_finish_turn,
 			'turn' : game.turn
 		}
@@ -157,8 +157,8 @@ def create_game(request):
 	Player_Profile.objects.create(player=user, game=game, pos="0,0", account_balance=500000)
 	for k, v in data['data'].items():
 		if v['game-data']['neighborhood']:
-			Cell.objects.create(pos=k, neighborhood=v['game-data']['neighborhood'], game=game, modified=True)
+			Cell.objects.create(pos=k, neighborhood=v['game-data']['neighborhood'], game=game, color=v['game-data']['color'], modified=True)
 		else:
-			Cell.objects.create(pos=k, neighborhood=-1, game=game, modified=True)
+			Cell.objects.create(pos=k, neighborhood=-1, game=game, color=v['game-data']['color'], modified=True)
 	return HttpResponse('test')
 
