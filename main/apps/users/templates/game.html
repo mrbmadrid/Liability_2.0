@@ -14,12 +14,7 @@
 
 </head>
 <body>
-    Game
     {% csrf_token %}
-    <form action="/logout">
-        <input type="submit" value="Logout">
-    </form>
-    <div id="view"></div>
     <input type="hidden" id = "Game_ID" value="{{game_id}}">
     <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
     <script src="{% static 'js/ThreeJS/three.js' %}"></script>
@@ -33,8 +28,21 @@
     <script src="{% static 'js/Hex/board.js' %}"></script>
     <script src="{% static 'js/Hex/cell.js' %}"></script>
     <script src="{% static 'js/Hex/tile.js' %}"></script>
+
+    <div class="wrapper">
+        
+        <div id="gameView">
+                
+        </div>
+        <div class="controls">
+            <form action="/logout">
+                <input type="submit" value="Logout">
+            </form>
+            <button id="DiceRoll">Dice Roll</button>
+        </div>
+
     <script src="{% static 'js/game-script.js' %}"></script>
     
-
+    </div>
 </body>
 </html>

@@ -92,6 +92,7 @@ function RenderHexDemo(){
         data : JSON.stringify({
             'function': 'Create_Game_Data',
             data: hx_grid.strip(),
+            spawns: hx_grid.spawns(),
             csrfmiddlewaretoken: '{% csrf_token %}'
         }),
         cache: false,
