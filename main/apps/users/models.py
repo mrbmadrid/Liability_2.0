@@ -44,6 +44,7 @@ class Game(models.Model):
 	name = models.CharField(max_length=25, default="No Name")
 	turn = models.IntegerField(default=0)
 	board_length = models.IntegerField(default=10)
+	board_width = models.IntegerField(default=10)
 	num_players = models.IntegerField(default=8)
 	waiting_to_finish_turn = models.IntegerField(default=8)
 	created_at = models.DateTimeField(auto_now_add=True)
@@ -54,6 +55,7 @@ class Game(models.Model):
 		"name" : self.name,
 		"turn" : self.turn,
 		"length" : self.board_length,
+		"width" : self.board_width,
 		"num_players" : self.num_players,
 		}
 	
@@ -81,6 +83,8 @@ class Player_Profile(models.Model):
 
 class Cell(models.Model):
 	pos = models.CharField(max_length=5)
+	price = models.IntegerField(default=25000)
+	value = models.IntegerField(default=25000)
 	q_1 = models.IntegerField(default=0)
 	q_2 = models.IntegerField(default=0)
 	q_3 = models.IntegerField(default=0)
@@ -88,10 +92,11 @@ class Cell(models.Model):
 	travel_cost = models.IntegerField(default=100)
 	stay_cost = models.IntegerField(default=500)
 	residual_income = models.IntegerField(default=500)
-	height = models.IntegerField(default=0.5)
+	height = models.FloatField(default=0.5)
 	neighborhood = models.IntegerField(default=0)
 	owner = models.ForeignKey(Player_Profile, related_name="cells_owned", on_delete=models.PROTECT, null=True)
 	game = models.ForeignKey(Game, related_name="cells", on_delete=models.PROTECT)
+	for_sale = models.BooleanField(default=True)
 	modified = models.BooleanField(default=False)
 	updated_at = models.DateTimeField(auto_now=True)
 
@@ -104,12 +109,14 @@ class Cell(models.Model):
 		cell_economy = {
 			"stay_cost" : 500.0,
 			"travel_cost" : 100.0,
-			"income" : 500.0
+			"income" : 500.,
+			"value" : 25000
 		}	
 		for count in range(0, self.neighborhood): #Modify economy based on neighborhood
 			cell_economy['stay_cost'] *= 1.2
 			cell_economy['travel_cost'] += 40
 			cell_economy['income'] += 50
+			cell_economy['value'] = pow(cell_economy['value'], 1.01)
 		quadrant_mod = self.get_quadrant_mod()
 		cell_economy['stay_cost'] *= quadrant_mod[0]
 		cell_economy['travel_cost'] *= quadrant_mod[1]
@@ -117,6 +124,9 @@ class Cell(models.Model):
 		self.travel_cost = cell_economy['travel_cost']
 		self.stay_cost = cell_economy['stay_cost']
 		self.residual_income = cell_economy['income']
+		self.value = cell_economy['value']
+		if not self.owner:
+			self.price = self.value
 		self.save()
 
 	def get_quadrant_mod(self):
@@ -169,6 +179,9 @@ class Cell(models.Model):
 			'y': self.pos.split(',')[1],
 			'h': self.height
 		},
+		"value" : self.value,
+		"price" : self.price,
+		"for_sale" : self.for_sale,
 		"buildings" : [self.q_1, self.q_2,self.q_3,self.q_4],
 		"travel_cost" : self.travel_cost,
 		"stay_cost" : self.stay_cost,

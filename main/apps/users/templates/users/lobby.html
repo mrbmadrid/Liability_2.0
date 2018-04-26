@@ -10,9 +10,8 @@
 
         <!-- CSS -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
-        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css'%}">
+        <link rel="stylesheet" href="{% static 'bootstrap-4.1.0-dist/css/bootstrap.min.css'%}">
         <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
-		<link rel="stylesheet" href="{% static 'css/form-elements.css' %}">
         <link rel="stylesheet" href="{% static 'css/lobby_style.css' %}">
 
         <!-- Favicon and touch icons -->
@@ -25,13 +24,32 @@
     </head>
 
     <body>
-
-        
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">navbar</nav>
+            <div class="row">
+                <div class="col-md-8 col-sm-12" id="chat">
+                    
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <!-- News -->
+                    <!-- List of Games Joined w/ status-->
+                        <!-- If running, list of players who have not finished current turn. -->
+                    <!--  -->
+                </div>
+            </div>
+            <div class="row">
+                <!-- Quickplay 4 --> 
+                <!-- Quickplay 8 -->
+                <!-- Join custom game -->
+                <!-- Create custom game -->
+            </div>
+        </div>
+      
         
 
         <!-- Javascript -->
         <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
-        <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'bootstrap-4.1.0-dist/js/bootstrap.min.js' %}"></script>
         <script src="{% static 'js/jquery.backstretch.min.js' %}"></script>
         <script src="{% static 'js/lobby_scripts.js' %}"></script>
 

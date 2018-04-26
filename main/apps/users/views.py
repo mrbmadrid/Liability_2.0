@@ -16,7 +16,7 @@ def index(request):
 def lobby(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
-	return HttpResponse('lobby')
+	return render(request, "users/lobby.html")
 
 
 '''
@@ -93,20 +93,22 @@ def get_game_data(request):
 	print(data)
 	game_id = data['id']
 	game = Game.objects.get(id=game_id)
-	c = Cell.objects.filter(game_id=game_id)
 	p = Player_Profile.objects.filter(game_id=game_id)
-	cells = {}
-	for cell in c:
-		cells[cell.pos] = cell.game_data()
-	players = {}
-	for player in p:
-		players[player.player.name] = player.game_data()
-	data = {
-	"game" : game.game_data(),
-	"cells" : cells,
-	"players" : players
-	}
-	return JsonResponse(data)
+	if(len(p.filter(player_id=request.session['id']))):
+		c = Cell.objects.filter(game_id=game_id)
+		cells = {}
+		for cell in c:
+			cells[cell.pos] = cell.game_data()
+		players = {}
+		for player in p:
+			players[player.player.name] = player.game_data()
+		data = {
+		"game" : game.game_data(),
+		"cells" : cells,
+		"players" : players
+		}
+		return JsonResponse(data)
+	return redirect(lobby)
 
 def join_game(request, game_id):
 	context = {
