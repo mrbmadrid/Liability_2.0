@@ -1,6 +1,6 @@
 var hx_scene = new hx_Scene();
-var hx_grid = new hx_Grid(10,10, [.5,1]);
-var hx_board = new hx_Board(10,10, [0,0]);
+var hx_grid = new hx_Grid(6,6, [.5,1]);
+var hx_board = new hx_Board(6,6, [0,0]);
 Init();
 function Init(){
 
@@ -13,11 +13,11 @@ function RenderHexDemo(){
 
     
     hx_grid.generate();
-    hx_board.generate();
+    hx_board.generate(false);
     hx_board.generateNeighborhoods(8, hx_board.boardSize)
-    console.log(hx_grid.grid['6,6']);
+    console.log(hx_grid.grid['3,3']);
     hx_scene.camera.position.set(20,30,20);
-    hx_scene.camera.lookAt(hx_grid.grid['6,6'].hx_cell.Cell.position)
+    hx_scene.camera.lookAt(hx_grid.grid['3,3'].hx_cell.Cell.position)
 
     hx_scene.renderer.shadowMap.enabled = true;
     hx_scene.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -86,11 +86,11 @@ function RenderHexDemo(){
    });
 
 
-   /* $.ajax({
+    $.ajax({
         type:'POST',
-        url: '/Create_Game',
+        url: '/Create_Game_Data',
         data : JSON.stringify({
-            'function': 'Create_Game',
+            'function': 'Create_Game_Data',
             data: hx_grid.strip(),
             csrfmiddlewaretoken: '{% csrf_token %}'
         }),
@@ -99,21 +99,6 @@ function RenderHexDemo(){
         processData: true,
         success: function(response){
             console.log(response);
-        },
-    });*/
-
-    $.ajax({
-        type:'POST',
-        url: '/game/10',
-        data : JSON.stringify({
-            'function': 'Init_Game',
-            csrfmiddlewaretoken: '{% csrf_token %}'
-        }),
-        cache: false,
-        contentType: false,
-        processData: true,
-        success: function(response){
-            console.log(JSON.parse(response));
         },
     });
 

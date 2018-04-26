@@ -16,7 +16,6 @@ class hx_Board {
                 var Tile = hxTile.tile;
                 Tile.pos = data.cells[tile].pos
                 Tile.selected = false;
-                console.log(data.cells[tile]);
                 hxTile.gamedata = {
                     'edgeCost': data.cells[tile].travel_cost,
                     'neighborhood': data.cells[tile].nh,
@@ -32,6 +31,7 @@ class hx_Board {
                     'buildings': data.cells[tile].buildings,
                     'players': []
                 }
+                Tile.material.color.set(data.cells[tile].color)
                 this.add(hxTile)
                 var offset = 0;
                 if(Tile.pos.y % 2 != 0){

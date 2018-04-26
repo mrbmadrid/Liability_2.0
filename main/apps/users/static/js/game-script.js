@@ -56,7 +56,7 @@ function RenderGame(data){
     
     hx_grid.generate();
     hx_board.generate(data);
-    hx_board.generateNeighborhoods(8, hx_board.boardSize)
+    //hx_board.generateNeighborhoods(8, hx_board.boardSize)
     console.log(hx_grid.grid['3,3']);
     hx_scene.camera.position.set(20,30,20);
     hx_scene.camera.lookAt(hx_grid.grid['3,3'].hx_cell.Cell.position)

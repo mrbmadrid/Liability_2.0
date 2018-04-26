@@ -169,15 +169,21 @@ def join_game(request, game_id):
 def create_game(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
+	return render(request,'_game.html')
+
+def create_game_data(request):
+	if not 'id' in request.session: #redirect to landing if not logged in
+		return redirect(index)
 	#make game
+	print('create game data')
 	user = User.objects.get(id=request.session['id'])
 	data = json.loads(request.body)
-	game = Game.objects.create(created_by=user)
+	game = Game.objects.create(created_by=user,board_width=6, board_length=6)
 	Player_Profile.objects.create(player=user, game=game, pos="0,0", account_balance=500000)
 	for k, v in data['data'].items():
 		if v['game-data']['neighborhood']:
 			Cell.objects.create(pos=k, neighborhood=v['game-data']['neighborhood'], game=game, color=v['game-data']['color'], modified=True)
 		else:
 			Cell.objects.create(pos=k, neighborhood=-1, game=game, color=v['game-data']['color'], modified=True)
-	return HttpResponse('test')
+	return JsonResponse({'game_id':game.id})
 
