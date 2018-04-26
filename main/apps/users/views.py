@@ -5,7 +5,8 @@ from django.http import JsonResponse
 from bcrypt import hashpw, gensalt, checkpw
 from .models import *
 from django.db.models import Count
-import json
+import json, random
+
 # Create your views here.
 
 
@@ -199,7 +200,7 @@ def dice_roll(request, game_id):
 	if str(game.turn) == profile.move[1:len(profile.move)]:
 		return JsonResponse({"roll": "You already rolled."})
 	else:
-		move = randint(1, 6)
+		move = random.randint(1, 6)
 		profile.turn = str(move)+str(game.turn)
 		profile.save()
 		return JsonResponse({"roll":str(move)})
