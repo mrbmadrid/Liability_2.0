@@ -3,3 +3,10 @@
 	height: 400px;
 	overflow: scroll;
 }
+#chat-log{
+	width:100%;
+	height:360px;
+}
+#chat-message-input{
+	width:90%;
+}
