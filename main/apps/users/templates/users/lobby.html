@@ -61,7 +61,11 @@
             <!-- Main content area -->
             <div class="row">
                 <div class="col-md-8 col-sm-12" id="chat">
-                    
+                    <textarea id="chat-log" readonly></textarea>
+                    <br/>
+                    <input id="chat-message-input" type="text" />
+                    <!-- <br/> -->
+                    <input id="chat-message-submit" type="button" value="Send" />
                 </div>
                 <div class="col-md-4 col-sm-12" id="right_info_pane">
                     <!-- Updates -->
@@ -106,7 +110,9 @@
                 <div class="col-md-2 col-sm-12 col-xs-12 btn btn-dark" id="create_game">Create Game</div>
             </div>
             <input type="hidden" id="user_id" value="{{request.session.id}}">
+            <input type="hidden" id="user_name" value="{{ request.session.user_name }}">
         </div>
+        
         
 
         <!-- Javascript -->
