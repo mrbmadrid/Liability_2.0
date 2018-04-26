@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.shortcuts import render, redirect, HttpResponse
+from django.http import JsonResponse
 from bcrypt import hashpw, gensalt, checkpw
 from .models import *
 import json
@@ -15,7 +16,7 @@ def index(request):
 def lobby(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
-	return render(request, "index.html")
+	return HttpResponse('lobby')
 
 
 '''
@@ -83,9 +84,14 @@ def check_email(request, email):
 '''
 	Game Submission/Update/Validation
 '''
-def get_game_data(request, game_id):
+def get_game_data(request):
 	if not 'id' in request.session: #redirect to landing if not logged in
 		return redirect(index)
+
+
+	data = json.loads(request.body)
+	print(data)
+	game_id = data['id']
 	game = Game.objects.get(id=game_id)
 	c = Cell.objects.filter(game_id=game_id)
 	p = Player_Profile.objects.filter(game_id=game_id)
@@ -100,8 +106,13 @@ def get_game_data(request, game_id):
 	"cells" : cells,
 	"players" : players
 	}
-	return HttpResponse(json.dumps(data))
+	return JsonResponse(data)
 
+def join_game(request, game_id):
+	context = {
+		"game_id":game_id
+	}
+	return render(request,'game.html', context)
 
 def create_game(request):
 	if not 'id' in request.session: #redirect to landing if not logged in

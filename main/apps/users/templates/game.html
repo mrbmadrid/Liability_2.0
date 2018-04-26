@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Liability</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" href="{% static 'css/game.css' %}">
+
+    
+
+</head>
+<body>
+    {% csrf_token %}
+    <form action="/logout">
+        <input type="submit" value="Logout">
+    </form>
+    <div id="view"></div>
+    <input type="hidden" id = "Game_ID" value="{{game_id}}">
+    <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+    <script src="{% static 'js/ThreeJS/three.js' %}"></script>
+    <script src="{% static 'js/ThreeJS/OrbitControls.js' %}"></script>
+
+    <script src="{% static 'js/Hex/SLL.js' %}"></script>
+    <script src="{% static 'js/Hex/heap.js' %}"></script>
+    <script src="{% static 'js/Hex/priorityQueue.js' %}"></script>
+    <script src="{% static 'js/Hex/scene.js' %}"></script>
+    <script src="{% static 'js/Hex/grid.js' %}"></script>
+    <script src="{% static 'js/Hex/board.js' %}"></script>
+    <script src="{% static 'js/Hex/cell.js' %}"></script>
+    <script src="{% static 'js/Hex/tile.js' %}"></script>
+    <script src="{% static 'js/game-script.js' %}"></script>
+    
+
+</body>
+</html>
