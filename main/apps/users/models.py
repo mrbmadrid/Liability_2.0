@@ -84,6 +84,7 @@ class Player_Profile(models.Model):
 
 class Cell(models.Model):
 	pos = models.CharField(max_length=5)
+	neighbors = models.CharField(max_length=255)
 	price = models.IntegerField(default=25000)
 	value = models.IntegerField(default=25000)
 	q_1 = models.IntegerField(default=0)

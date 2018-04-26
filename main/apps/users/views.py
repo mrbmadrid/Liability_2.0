@@ -196,7 +196,7 @@ def dice_roll(request, game_id):
 		return redirect(index)
 	profile = Player_Profile.objects.get(player_id=request.session['id'], game_id=game_id)
 	game = Game.objects.get(id=game_id)
-	if str(game.turn) == profile.turn[1:len(profile.turn)]:
+	if str(game.turn) == profile.move[1:len(profile.move)]:
 		return JsonResponse({"roll": "You already rolled."})
 	else:
 		move = randint(1, 6)
