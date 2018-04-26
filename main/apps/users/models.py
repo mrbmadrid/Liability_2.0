@@ -64,6 +64,7 @@ class Player_Profile(models.Model):
 	player = models.ForeignKey(User, related_name="player_profiles", on_delete=models.PROTECT)
 	pos = models.CharField(max_length=5)
 	turn = models.IntegerField(default=0)
+	move = models.CharField(max_length=255, default="00")
 	account_balance = models.IntegerField()
 	action = models.CharField(max_length=255)
 	game = models.ForeignKey(Game, related_name="player_profiles", on_delete=models.PROTECT)
