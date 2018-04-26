@@ -4,14 +4,18 @@ canvas{
     height:80%;
     outline:1px solid red;
 }
+
 #view {
-    position: absolute;
     top: 0;
-    left: 0;
 
 }
 form{
     width:25%;
     text-align: right;
     float:right;
+}
+
+.user_icon {
+  border-radius: 25px;
+  width: 50px;
 }
