@@ -1,12 +1,76 @@
 #right_info_pane {
 	border-left: 2px solid black;
 	height: 400px;
-	overflow: scroll;
 }
 #chat-log{
 	width:100%;
-	height:360px;
+	height:365px;
+	margin-bottom: -20px;
+	background-color: #272b30;
+	margin-top:5px;
+	background-image: url('/static/img/logos/logo-lg-2-5%.png');
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+	padding:1%;
+}
+#img{
+	opacity: .1;
 }
 #chat-message-input{
-	width:90%;
+	width:100%;
+}
+#chat-message-submit{
+	width:100%;
+}
+#chat-div{
+	width:100%;
+}
+.username{
+	font-weight: bolder;
+	font-size: large;
+	color: white;
+}
+.messages{
+	color: #69BD45;
+}
+
+
+#right_info_pane{
+	background-color:#272b30;
+}
+#right_info_pane {
+	margin-top:5px;
+	margin-bottom:5px;
+}
+.col h3{
+	color: white;
+	text-decoration-line: underline;
+}
+.games{
+	color: #0577fb;
+	width:100%;
+}
+li{
+	font-weight: 500;
+	color: #F6851F;
+}
+#game_name{
+	color: #ED1F24;
+	text-decoration-line: underline;
+}
+#turn{
+	color: #F5ED21;
+}
+.updates{
+	overflow-y: scroll;
+	height:165px;
+}
+#player_games{
+	overflow-y: scroll;
+	height:125px;
+	width:104.25%;
+}
+.turn_num{
+	margin-left:45px;
 }
