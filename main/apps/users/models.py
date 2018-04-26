@@ -46,6 +46,7 @@ class Game(models.Model):
 	board_length = models.IntegerField(default=10)
 	board_width = models.IntegerField(default=10)
 	num_players = models.IntegerField(default=8)
+	spawn_locations = models.CharField(max_length=255, null=True)
 	waiting_to_finish_turn = models.IntegerField(default=8)
 	created_at = models.DateTimeField(auto_now_add=True)
 	created_by = models.ForeignKey(User, related_name="created_games", on_delete=models.PROTECT)

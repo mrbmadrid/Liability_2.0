@@ -2,7 +2,7 @@ body { margin: 0; overflow: hidden;}
 canvas{
     width:80%;
     height:80%;
-    outline:1px solid red;
+    outline:1px solid black;
 }
 #view {
     position: absolute;
@@ -11,7 +11,35 @@ canvas{
 
 }
 form{
-    width:25%;
-    text-align: right;
-    float:right;
+    text-align: center;
+}
+.wrapper{
+    display:flex;
+    justify-content: center;
+    width:95%;
+    margin:auto;
+    margin-top:20px;
+}
+.controls{
+    display:flex;
+    flex-direction: column;
+    padding-top:10%;
+    text-align: center;
+    flex-grow: 1;
+    margin:0;
+}
+.controls input, .controls button{
+    width:100%;
+    margin:10px;
+}
+#gameView{
+    flex-grow: 1;
+    margin:10px;
+    width:70%;
+    min-height: 524px;
+    max-height: 800px;
+    height:100%;
+}
+.title{
+    text-align: center;
 }
