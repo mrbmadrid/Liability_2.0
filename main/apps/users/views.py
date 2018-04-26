@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.http import JsonResponse
 from bcrypt import hashpw, gensalt, checkpw
 from .models import *
+from django.db.models import Count
 import json
 # Create your views here.
 
@@ -52,7 +53,8 @@ def login(request):
 			user = User.objects.get(user_name=request.POST['login-username'])
 			print(user.sw)
 			if checkpw(request.POST['login-password'].encode(), user.pw.encode()):
-				request.session['id'] = User.objects.get(user_name=request.POST['login-username']).id
+				request.session['id'] = user.id
+				request.session['user_name'] = user.user_name
 				return redirect(lobby)
 			else:
 				login_errors['exists'] = "Check your username or password."
@@ -80,6 +82,46 @@ def check_email(request, email):
 		return HttpResponse("registered")
 	return HttpResponse("unregistered")
 
+def user(request, id):
+	if not 'id' in request.session: #redirect to landing if not logged in
+		return redirect(index)
+	if not int(id) == int(request.session['id']):
+		return HttpResponse("Invalid user ID for request.")
+	data = {}
+	data['games']={}
+	games = Player_Profile.objects.filter(player_id=request.session['id']).select_related('game')
+	for game in games:
+		data['games'][game.name]={
+			'id' : game.id,
+			'waiting' : game.waiting_to_finish_turn,
+			'turn' : game.turn
+		}
+	return HttpResponse(json.dumps(data))
+
+def join_public_game(request, size):
+	if not 'id' in request.session: #redirect to landing if not logged in
+		return redirect(index)
+	user = User.objects.get(id=request.session['id'])
+	user_profiles = Player_Profile.objects.filter(player_id=user.id)
+	games = Game.objects.filter(turn__lte=0).exclude(player_profiles__in=user_profiles).annotate(player_count=Count('player_profiles')).filter(player_count__lte=size, num_players=size)
+	if len(games):
+		game = games.first()
+		Player_Profile.objects.create(player=user, game=game, pos="0,0", account_balance=500000)
+		if game.player_profiles.count() == game.num_players:
+			game.turn = 1
+			game.save()
+		return HttpResponse("Success")
+	else:
+		game = Game.objects.create(created_by=user, num_players=size)
+		Player_Profile.objects.create(game=game, player=user, pos='0,0', account_balance=500000)
+		if size == 4:
+			for count in range(0, 36):
+				Cell.objects.create(pos=str(int(count/6))+","+str(int(count%6)), neighborhood=-1, game=game, modified=True)
+			return HttpResponse(Cell.objects.filter(game=game))
+		elif size == 8:
+			for count in range(0, 100):
+				Cell.objects.create(pos=str(int(count/10))+","+str(int(count%10)), neighborhood=-1, game=game, modified=True)
+			return HttpResponse(Cell.objects.filter(game=game))
 
 '''
 	Game Submission/Update/Validation
@@ -123,6 +165,7 @@ def create_game(request):
 	user = User.objects.get(id=request.session['id'])
 	data = json.loads(request.body)
 	game = Game.objects.create(created_by=user)
+	Player_Profile.objects.create(player=user, game=game, pos="0,0", account_balance=500000)
 	for k, v in data['data'].items():
 		if v['game-data']['neighborhood']:
 			Cell.objects.create(pos=k, neighborhood=v['game-data']['neighborhood'], game=game, modified=True)
