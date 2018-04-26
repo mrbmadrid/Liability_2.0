@@ -102,7 +102,7 @@ def join_public_game(request, size):
 		return redirect(index)
 	user = User.objects.get(id=request.session['id'])
 	user_profiles = Player_Profile.objects.filter(player_id=user.id)
-	games = Game.objects.filter(turn__lte=0).exclude(player_profiles__in=user_profiles).annotate(player_count=Count('player_profiles')).filter(player_count__lte=size).filter(num_players=size)
+	games = Game.objects.filter(turn__lte=0).exclude(player_profiles__in=user_profiles).annotate(player_count=Count('player_profiles')).filter(player_count__lte=size, num_players=size)
 	if len(games):
 		game = games.first()
 		Player_Profile.objects.create(player=user, game=game, pos="0,0", account_balance=500000)
@@ -113,9 +113,14 @@ def join_public_game(request, size):
 	else:
 		game = Game.objects.create(created_by=user, num_players=size)
 		Player_Profile.objects.create(game=game, player=user, pos='0,0', account_balance=500000)
-		for count in range(0, 36):
-			Cell.objects.create(pos=str(int(count/6))+","+str(int(count%6)), neighborhood=-1, game=game, modified=True)
-		return HttpResponse(Cell.objects.filter(game=game))
+		if size == 4:
+			for count in range(0, 36):
+				Cell.objects.create(pos=str(int(count/6))+","+str(int(count%6)), neighborhood=-1, game=game, modified=True)
+			return HttpResponse(Cell.objects.filter(game=game))
+		elif size == 8:
+			for count in range(0, 100):
+				Cell.objects.create(pos=str(int(count/10))+","+str(int(count%10)), neighborhood=-1, game=game, modified=True)
+			return HttpResponse(Cell.objects.filter(game=game))
 
 '''
 	Game Submission/Update/Validation
