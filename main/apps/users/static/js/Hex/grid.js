@@ -64,14 +64,33 @@ class hx_Grid {
             pos = c.hx_cell.Cell.pos;
             key = String(pos.x) + "," + String(pos.y)
             gamedata = c.hx_tile.gamedata;
+            var nh = function(){
+                var neighbors_S = "";
+                for(var n in c.hx_cell.neighbors){
+                    var p = c.hx_cell.neighbors[n].hx_cell.Cell.pos
+                    var k = String(p.x) + "," + String(p.y) + "_"
+                    neighbors_S += k;
+                }
+                return neighbors_S;
+            }
             info = {
                 'pos':pos,
+                'neighbors': nh,
                 'game-data':gamedata,
                 'id':id
             }
             stripped_grid[key] = info;
         }
         return stripped_grid;
+    }
+
+    spawns(){
+        var spawns = "";
+        for(var i=0;i<4;i++){
+            var s = String(Math.floor(Math.random() * (this.MaxWidth-1 - 0 + 1)) + 0) + "," + String(Math.floor(Math.random() * (this.MaxLength-1 - 0 + 1)) + 0);
+            spawns += s+"_"
+        }
+        return spawns;
     }
 
     get grid(){
@@ -158,16 +177,17 @@ class hx_Grid {
     calculatePath(A,B, greedyWeight, dijkstrasWeight){
         //console.log(A)
         var key = String(A[0]) + "," + String(A[1])
+        var keyB = String(B[0]) + "," + String(B[1])
         var PQ = new PriorityQueue();
         PQ.push(A,0);
         var came_from = {}
         var cost_so_far = {};
         came_from[key] = null;
         cost_so_far[key] = 0;
-
+        if(key == keyB){return;}
         while(PQ.empty() == false){
             var runner = PQ.pop();
-            console.log(runner, B);
+            console.log(runner.item, B);
 
             if(runner.item == B)
                 break;
@@ -200,13 +220,16 @@ class hx_Grid {
     reconstruct_path(came_from, A, B){
         var current = B
         var path = []
+        var count = 0;
+        console.log("roll", hx_scene.get_roll)
         while (current != A){
             path.push(current)
             current = came_from[current]
         }
         path.push(A)
         path.reverse()
-        return path;
+        
+        return path.slice(0,hx_scene.get_roll+1);
     }
 
     nodeCost(A,B){
