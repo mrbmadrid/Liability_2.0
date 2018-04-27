@@ -237,7 +237,7 @@ def action(request):
 		profile.pos = str(pos[0])+","+str(pos[1])
 		profile.save()
 		print(data)
-		return HttpResponse("Move")
+		return JsonResponse({'result':True})
 	elif data['function'] == 'end':
 		return HttpResponse("End Turn")
 
