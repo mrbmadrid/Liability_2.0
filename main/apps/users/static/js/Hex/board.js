@@ -9,7 +9,7 @@ class hx_Board {
         this.spawned_buildings = [];
         this.models_to_load = {
             'apartments': "/static/js/json_models/apartment_building.json",
-            /*'assemblyPlant': "/static/js/json_models/assembly_plant.json",
+            'assemblyPlant': "/static/js/json_models/assembly_plant.json",
             'corpHQ': "/static/js/json_models/corporate_hq.json",
             'distrobutionCenter': "/static/js/json_models/distrobution_center.json",
             'forSale': "/static/js/json_models/for_sale.json",
@@ -21,7 +21,7 @@ class hx_Board {
             'powerPlant': "/static/js/json_models/power_plant.json",
             'prison': "/static/js/json_models/prison.json",
             'trailerPark': "/static/js/json_models/trailer_park.json",
-            'truckStop': "/static/js/json_models/truck_stop.json",*/
+            'truckStop': "/static/js/json_models/truck_stop.json",
         };
     }
 
@@ -146,8 +146,7 @@ class hx_Board {
     sectionNeighborhoods(queue, sideLength){
         var current = {x:0,y:0,h:0.5};
         var assigned = {};
-        var buildings = ['apartments']//,'assemblyPlant','corpHQ','distrobutionCenter','forSale','hotel','housingDev',
-        //'luxuryCondos','manufacturingPlant','outletMall','powerPlant','prison','trailerPark','truckStop']
+        var buildings = ['apartments','assemblyPlant','corpHQ','distrobutionCenter','hotel','housingDev','luxuryCondos','manufacturingPlant','outletMall','powerPlant','prison','trailerPark','truckStop']
         for(var nh=0; nh < this.neighborhoods.length;nh++){
             var visited = {};
             var size = this.neighborhoods[nh].size;
@@ -174,6 +173,14 @@ class hx_Board {
                 this.Tiles[key].gamedata.color = this.neighborhoods[nh].color
                 size -= 1;
                 current = queue.dequeue().item;
+                if(has_buildings >= 6){
+                    for(var z=1;z<has_buildings/2;z++){
+                        var upgrade = Math.floor(Math.random() * buildings.length);
+                        var model_url = this.models_to_load[buildings[upgrade]]
+                        this.Tiles[key].gamedata.children.buildings[z-1] = upgrade
+                        this.loadmodel(model_url,hx_grid.grid[key],z-1)
+                    }
+                }
             }
             var done = false;
             for(var i=0;i<sideLength-1;i++){
@@ -194,20 +201,39 @@ class hx_Board {
         }
     }
     
-    loadmodel(path, func, tile){
+    loadmodel(path, cell,quad){
         // instantiate a loader
         var loader = new THREE.JSONLoader();
-
+        //console.log(path,cell)
         // load a resource
         loader.load(
             // resource URL
             path,
 
             // onLoad callback
-            function ( geometry, materials ) {
-                var material = materials[ 0 ];
-                var object = new THREE.Mesh( geometry, material );
-                scene.add( object );
+            function ( geometry ) {
+                var material = new THREE.MeshLambertMaterial( {color: 0xDAD9D9} );
+                var obj = new THREE.Mesh(geometry, material);                 
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+                obj.scale.set(1,1,1);
+                hx_scene.add(obj)
+                var pos = cell.hx_tile.Tile.position;
+                var height = cell.hx_cell.Cell.pos.h
+                switch(quad){
+                    case 0:
+                        obj.position.set(pos.x-.5,height/2,pos.z-.35)
+                    break;
+                    case 1:
+                        obj.position.set(pos.x-.5,height/2,pos.z+.35)
+                    break;
+                    case 2:
+                        obj.position.set(pos.x+.5,height/2,pos.z-.35)
+                    break;
+                    case 3:
+                        obj.position.set(pos.x+.5,height/2,pos.z+.35)
+                    break;
+                }
             },
 
             // onProgress callback
