@@ -164,6 +164,24 @@ def get_game_data(request):
 		return JsonResponse(data)
 	return redirect(lobby)
 
+def game_data(game_id, session):
+	game = Game.objects.get(id=game_id)
+	p = Player_Profile.objects.filter(game_id=game_id)
+	if(len(p.filter(player_id=session['id']))):
+		c = Cell.objects.filter(game_id=game_id)
+		cells = {}
+		for cell in c:
+			cells[cell.pos] = cell.game_data()
+		players = {}
+		for player in p:
+			players[player.player.user_name] = player.game_data()
+		data = {
+		"game" : game.game_data(),
+		"cells" : cells,
+		"players" : players
+		}
+		return data
+
 def load_game(request, game_id):
 	user = User.objects.get(id=request.session['id'])
 	game = Game.objects.filter(id=game_id)
@@ -236,8 +254,7 @@ def action(request):
 		pos = data['data'][len(data['data'])-1]
 		profile.pos = str(pos[0])+","+str(pos[1])
 		profile.save()
-		print(data)
-		return redirect(get_game_data)
+		return redirect(json.dumps(game_data(game.id, request.session)))
 	elif data['function'] == 'end':
 		return HttpResponse("End Turn")
 
