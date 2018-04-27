@@ -75,7 +75,7 @@ class hx_Grid {
             }
             info = {
                 'pos':pos,
-                'neighbors': nh,
+                'neighbors': nh(),
                 'game-data':gamedata,
                 'id':id
             }

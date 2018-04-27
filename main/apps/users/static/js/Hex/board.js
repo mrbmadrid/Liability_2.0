@@ -57,6 +57,16 @@ class hx_Board {
                 }
                 Tile.position.set((Tile.pos.x*1.75+offset),0,Tile.pos.y*1.5)
                 hx_scene.add(Tile)
+                var buildings = ['apartments','assemblyPlant','corpHQ','distrobutionCenter','hotel','housingDev','luxuryCondos','manufacturingPlant','outletMall','powerPlant','prison','trailerPark','truckStop']
+                for(var i=0;i<hxTile.gamedata.children.buildings.length;i++){
+                    var upgrade = hxTile.gamedata.children.buildings[i]
+                    if(upgrade == 0){continue;}
+                    var model_url = this.models_to_load[buildings[upgrade]]
+                    var key = String(Tile.pos.x) + "," + String(Tile.pos.y)
+                    hx_grid.grid[key].hx_cell.Cell.pos = data.cells[tile].pos
+                    this.loadmodel(model_url,hx_grid.grid[key],i,2)
+                }
+
             }
 
             return;
@@ -98,7 +108,7 @@ class hx_Board {
         var board_size = boardSize;
         var max = Math.floor(boardSize/count);
         var n = 0;
-        var colors = ['red','green','blue','purple','black','gray','yellow','orange','pink','teal','white','brown'] //['0xE74C3C','0x27AE60','0x3498DB','0x9B59B6','0x17202A','0x7E5109','0x626567','0xF1C40F','0xE67E22','0xF5B7B1','0x76D7C4','0xFBFCFC']
+        var colors = ['red','green','blue','purple','gray','yellow','orange','pink','teal','white','brown'] //['0xE74C3C','0x27AE60','0x3498DB','0x9B59B6','0x17202A','0x7E5109','0x626567','0xF1C40F','0xE67E22','0xF5B7B1','0x76D7C4','0xFBFCFC']
         var colors_picked = []
         while (board_size > 0){
             if(this.neighborhoods.length < count-1){
@@ -178,7 +188,8 @@ class hx_Board {
                         var upgrade = Math.floor(Math.random() * buildings.length);
                         var model_url = this.models_to_load[buildings[upgrade]]
                         this.Tiles[key].gamedata.children.buildings[z-1] = upgrade
-                        this.loadmodel(model_url,hx_grid.grid[key],z-1)
+                        console.log(key,hx_grid.grid[key].hx_cell.Cell.pos)
+                        this.loadmodel(model_url,hx_grid.grid[key],z-1,2)
                     }
                 }
             }
@@ -201,7 +212,7 @@ class hx_Board {
         }
     }
     
-    loadmodel(path, cell,quad){
+    loadmodel(path, cell,quad, heightmodifier){
         // instantiate a loader
         var loader = new THREE.JSONLoader();
         //console.log(path,cell)
@@ -222,16 +233,16 @@ class hx_Board {
                 var height = cell.hx_cell.Cell.pos.h
                 switch(quad){
                     case 0:
-                        obj.position.set(pos.x-.5,height/2,pos.z-.35)
+                        obj.position.set(pos.x-.5,height/heightmodifier,pos.z-.35)
                     break;
                     case 1:
-                        obj.position.set(pos.x-.5,height/2,pos.z+.35)
+                        obj.position.set(pos.x-.5,height/heightmodifier,pos.z+.35)
                     break;
                     case 2:
-                        obj.position.set(pos.x+.5,height/2,pos.z-.35)
+                        obj.position.set(pos.x+.5,height/heightmodifier,pos.z-.35)
                     break;
                     case 3:
-                        obj.position.set(pos.x+.5,height/2,pos.z+.35)
+                        obj.position.set(pos.x+.5,height/heightmodifier,pos.z+.35)
                     break;
                 }
             },
