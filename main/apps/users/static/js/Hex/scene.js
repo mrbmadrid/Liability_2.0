@@ -86,14 +86,15 @@ class hx_Scene {
         var intersects = this.hx_scene.raycaster.intersectObjects( this.hx_scene._scene.children );
         if (intersects.length < 1)
             return;
+
         var x = intersects[ intersects.length-1 ].object.pos.x;
         var y = intersects[ intersects.length-1 ].object.pos.y;
         this.hx_scene.points['B'] = [x,y];
-
+        var key = String(x + "," + y)
+       // console.log(hx_grid.grid[key])
         if(this.hx_scene.points['A'] == null || this.hx_scene.points['B'] == null)
             return;
 
-        
         if (this.AStar_cooldown == true)
             return;
 
@@ -114,7 +115,7 @@ class hx_Scene {
             }            
         }
 
-        var path = hx_grid.calculatePath(this.hx_scene.points['A'], this.hx_scene.points['B'],1,1);
+        var path = hx_grid.calculatePath(this.hx_scene.points['A'], this.hx_scene.points['B'],1, 1);
         var path_colors = {};
         this.path = path;
         for(var cords in path){
@@ -124,7 +125,7 @@ class hx_Scene {
             path_colors[key] = hx_grid.grid[key].hx_tile.gamedata.color
             hx_grid.grid[key].hx_tile.Tile.material.color.set( 0x1DF800 )
         }
-        console.log(path_colors);
+        //console.log(path_colors);
         this.path_colors = path_colors;
     }
 
@@ -139,9 +140,10 @@ class hx_Scene {
             }
 
             intersects[ intersects.length-1 ].object.selected = !intersects[ intersects.length-1 ].object.selected;
-            console.log(intersects[ intersects.length-1 ]);
-            console.log(intersects[ intersects.length-1 ].object.pos);
-            console.log(intersects[ intersects.length-1 ].point, intersects[ intersects.length-1 ].object.getWorldPosition());
+            var x = intersects[ intersects.length-1 ].object.pos.x;
+            var y = intersects[ intersects.length-1 ].object.pos.y;
+            var key = String(x + "," + y)
+            console.log(hx_board.board[key])
 
             this.hx_scene.cellNeighbor(intersects[ intersects.length-1 ].object.pos, false)
             
@@ -157,7 +159,7 @@ class hx_Scene {
                     var material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
                     var cubeA = new THREE.Mesh( geometry, material );
 
-                    if(this.AStar = true){
+                    if(this.AStar = true){/*
                         this.StartMarker = !this.StartMarker;
                         if(!this.StartMarker){
                             return;
@@ -199,7 +201,7 @@ class hx_Scene {
                         hx_grid.grid[key].hx_tile.gamedata['children'].buildings.push(cubeA);
                         //console.log(hx_grid.grid[key])
                         
-                    }
+                    */}
                     //intersects[ intersects.length-1 ].object.material.opacity = 0
                     //intersects[ intersects.length-1 ].object.material.transparent = true;
                 }

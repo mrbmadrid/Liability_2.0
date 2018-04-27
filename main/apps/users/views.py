@@ -210,7 +210,7 @@ def action(request):
 			move = random.randint(1, 6)
 			profile.turn = str(move)+str(game.turn)
 			profile.save()
-			return JsonResponse({"roll":str(move)})
+			return JsonResponse({"roll":str(move),"pos": profile.pos})
 			#return JsonResponse({"roll": "You already rolled."})
 		else:
 			move = random.randint(1, 6)

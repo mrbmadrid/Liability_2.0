@@ -144,6 +144,8 @@ function RollTheDice(){
         success: function(response){
             console.log(response);
             hx_scene.roll(parseInt(response.roll));
+            var cords = response.pos.split(",")
+            hx_scene.points['A'] = [parseInt(cords[0]),parseInt(cords[1])];
         },
     });
 }
