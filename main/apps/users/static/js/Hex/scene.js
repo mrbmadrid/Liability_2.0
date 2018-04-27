@@ -7,6 +7,8 @@ class hx_Scene {
         this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         this._renderer.setSize( window.innerWidth*.75, window.innerHeight*.75 );
         this.controls = new THREE.OrbitControls( this._camera );
+        this.controls.minDistance = 5;
+        this.controls.maxDistance = 17;
         this.controls.update();
         this.raycaster = new THREE.Raycaster();
         this.mouse_ = new THREE.Vector2();
@@ -21,9 +23,10 @@ class hx_Scene {
         this._roll = 0;
         this.AStar_cooldown = false;
         this._loader = new THREE.JSONLoader();
-        var green = new THREE.Color( 0x40C843 );
-        this.hover_path = null;
+        this.path_hover = null;
         this.path_colors = null;
+        var green = new THREE.Color( 0x40C843 );
+
 
 
         document.getElementById('gameView').appendChild( this._renderer.domElement );
@@ -59,6 +62,9 @@ class hx_Scene {
 
 
     }
+    test(){
+        console.log('test')
+    }
 
     roll(val){
         this._roll = val;
@@ -67,6 +73,12 @@ class hx_Scene {
     get get_roll(){
         return this._roll;
     }
+
+    get_path(){
+        return this.path_hover;
+    }
+
+
     onWindowResize(){
 
         this.hx_scene.camera.aspect = window.innerWidth / window.innerHeight;
@@ -79,6 +91,7 @@ class hx_Scene {
     onMouseMove( event ) {
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
+        
         var rect = this.hx_scene.renderer.domElement.getBoundingClientRect();
         this.hx_scene.mouse_.x = ( ( event.clientX - rect.left ) / ( rect.width - rect.left ) ) * 2 - 1;
         this.hx_scene.mouse_.y = - ( ( event.clientY - rect.top ) / ( rect.bottom - rect.top) ) * 2 + 1;
@@ -86,15 +99,14 @@ class hx_Scene {
         var intersects = this.hx_scene.raycaster.intersectObjects( this.hx_scene._scene.children );
         if (intersects.length < 1)
             return;
+
+        
         var x = intersects[ intersects.length-1 ].object.pos.x;
         var y = intersects[ intersects.length-1 ].object.pos.y;
         this.hx_scene.points['B'] = [x,y];
-
-        if(this.hx_scene.points['A'] == null || this.hx_scene.points['B'] == null)
-            return;
-
-        
-        if (this.AStar_cooldown == true)
+        var key = String(x + "," + y)
+       // console.log(hx_grid.grid[key])
+        if(this.hx_scene.points['A'] == null || this.hx_scene.points['B'] == null || this.AStar_cooldown == true || $('#confirm_move').css('display') == 'block' )
             return;
 
         this.AStar_cooldown = true;
@@ -107,115 +119,67 @@ class hx_Scene {
 
         
 
-        if(this.path != null){
-            for(var cords in this.path){
-                var key = String(this.path[cords][0]) + "," + String(this.path[cords][1])
-                hx_grid.grid[key].hx_tile.Tile.material.color.set( this.path_colors[key] )
+        if(hx_scene.path_hover != null){
+            for(var cords in hx_scene.path_hover){
+                var key = String(hx_scene.path_hover[cords][0]) + "," + String(hx_scene.path_hover[cords][1])
+                hx_grid.grid[key].hx_tile.Tile.material.color.set( hx_scene.path_colors[key] )
             }            
         }
 
-        var path = hx_grid.calculatePath(this.hx_scene.points['A'], this.hx_scene.points['B'],1,1);
+        var path = hx_grid.calculatePath(this.hx_scene.points['A'], this.hx_scene.points['B'],10, 1);
         var path_colors = {};
-        this.path = path;
+        
         for(var cords in path){
-            if(cords == 0)
-                continue;
+            if(cords == 0){continue;}
             var key = String(path[cords][0]) + "," + String(path[cords][1])
             path_colors[key] = hx_grid.grid[key].hx_tile.gamedata.color
             hx_grid.grid[key].hx_tile.Tile.material.color.set( 0x1DF800 )
         }
-        console.log(path_colors);
-        this.path_colors = path_colors;
+        hx_scene.path_hover = path;
+        hx_scene.path_colors = path_colors;
+        
     }
 
     
     onMouseLeftClick( event ) {
         // calculate objects intersecting the picking ray
-        
+        $('#info_tile').hide(); 
         var intersects = this.hx_scene.raycaster.intersectObjects( this.hx_scene._scene.children );
             
             if (intersects.length < 1){
                 return;
             }
 
-            intersects[ intersects.length-1 ].object.selected = !intersects[ intersects.length-1 ].object.selected;
-            console.log(intersects[ intersects.length-1 ]);
-            console.log(intersects[ intersects.length-1 ].object.pos);
-            console.log(intersects[ intersects.length-1 ].point, intersects[ intersects.length-1 ].object.getWorldPosition());
-
-            this.hx_scene.cellNeighbor(intersects[ intersects.length-1 ].object.pos, false)
-            
-            if(intersects[ intersects.length-1 ].object.selected == true){
-                
-                if(intersects[ intersects.length-1 ].object.cell == true){ //if a cell toggle to red
-                    intersects[ intersects.length-1 ].object.material.opacity = 1
-                    intersects[ intersects.length-1 ].object.children = intersects[ intersects.length-1 ].object.oldChildren
-                    intersects[ intersects.length-1 ].object.material.transparent = false;
-                    intersects[ intersects.length-1 ].object.material.color.set( 0xFF0000 );
-                }else{ //if a tile turn transparent
-                    var geometry = new THREE.BoxBufferGeometry( .2, .5, .2 );
-                    var material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
-                    var cubeA = new THREE.Mesh( geometry, material );
-
-                    if(this.AStar = true){
-                        this.StartMarker = !this.StartMarker;
-                        if(!this.StartMarker){
-                            return;
-                            intersects[ intersects.length-1 ].object.material.color.set( 0x0047FF );
-                            var x,y;
-                            x = intersects[ intersects.length-1 ].object.pos.x;
-                            y = intersects[ intersects.length-1 ].object.pos.y;
-                            this.hx_scene.points['B'] = [x,y];
-                            var path = hx_grid.calculatePath(this.hx_scene.points['A'], this.hx_scene.points['B'],1,1);
-                            for(var cords in path){
-                                if(cords == 0 || cords == path.length-1)
-                                    continue;
-                                var key = String(path[cords][0]) + "," + String(path[cords][1])
-                                hx_grid.grid[key].hx_tile.Tile.material.color.set( 0x1DF800 )
-                            }
-                        }else{
-                            intersects[ intersects.length-1 ].object.material.color.set( 0xFF0000 );  
-                            var x,y;
-                            x = intersects[ intersects.length-1 ].object.pos.x;
-                            y = intersects[ intersects.length-1 ].object.pos.y;
-                            this.hx_scene.points['A'] = [x,y];
-                            this.AStar_cooldown = true;
-
-                            setInterval(function()
-                            { 
-                                this.AStar_cooldown = false;
-                            }, 1500);
-                        }
-                        var pos = intersects[ intersects.length-1 ].object.pos
-                        var key = String(pos.x) + "," + String(pos.y)
-                        
-                        intersects[ intersects.length-1 ].object.add(cubeA);
-                        var t = intersects[ intersects.length-1 ].object
-                        var offset = t.width*.25
-                        cubeA.position.set(t.position.x+.25, 0.5 , t.position.z-.25)
-                        cubeA.castShadow = true; //default is false
-                        cubeA.receiveShadow = false; //default
-                        this.scene.add(cubeA);
-                        hx_grid.grid[key].hx_tile.gamedata['children'].buildings.push(cubeA);
-                        //console.log(hx_grid.grid[key])
-                        
-                    }
-                    //intersects[ intersects.length-1 ].object.material.opacity = 0
-                    //intersects[ intersects.length-1 ].object.material.transparent = true;
-                }
-
-            }else{
-
-                if(intersects[ intersects.length-1 ].object.cell == true){ //if a cell turn back to transparent
-                    intersects[ intersects.length-1 ].object.material.opacity = 0
-                    intersects[ intersects.length-1 ].object.material.transparent = true;
-                    intersects[ intersects.length-1 ].object.material.color.set( 0xFFFFFF ); 
-                }else{ //if a tile turn back green
-                    intersects[ intersects.length-1 ].object.material.opacity = 1
-                    intersects[ intersects.length-1 ].object.material.transparent = false;
-                    intersects[ intersects.length-1 ].object.material.color.set( 0x40C843 ); 
-                }           
+            if(this.hx_scene.points['A'] != null){
+                $('#confirm_move').show();
+                $('#confirm_move').css({
+                    top: event.pageY-$('#confirm_move').height() + "px",
+                    left:  event.pageX + "px",
+                });
+                return;
             }
+
+            $('#info_tile').css({
+                top: event.pageY-$('#info_tile').height() + "px",
+                left:  event.pageX + "px",
+            });
+
+            intersects[ intersects.length-1 ].object.selected = !intersects[ intersects.length-1 ].object.selected;
+            var x = intersects[ intersects.length-1 ].object.pos.x;
+            var y = intersects[ intersects.length-1 ].object.pos.y;
+            
+            var key = String(x + "," + y)
+            console.log(hx_board.board[key])
+            console.log([x,y],hx_grid.calculateDistance([x,y], [5,1]))
+            $('#info_tile').show();
+            $('#info_nh').text(hx_board.board[key].gamedata.neighborhood);
+            $('#info_value').text('$' + hx_board.board[key].gamedata.value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+            $('#info_income').text('$' + hx_board.board[key].gamedata.residual_income.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+            $('#info_price').text('$' + hx_board.board[key].gamedata.price.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+            $('#info_rent').text('$' + hx_board.board[key].gamedata.stayCost.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+            $('#info_toll').text('$' + hx_board.board[key].gamedata.edgeCost.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+            $('#info_owner').text(hx_board.board[key].gamedata.owner);
+
     }
 
     cellNeighbor(pos, mark){

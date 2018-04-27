@@ -5,6 +5,7 @@ Init();
 function Init(){
 
 
+
     RenderHexDemo();
 
     //console.log(hx_grid.grid);
