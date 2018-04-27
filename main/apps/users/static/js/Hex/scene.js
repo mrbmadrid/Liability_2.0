@@ -53,7 +53,9 @@ class hx_Scene {
     add(obj){
         this._scene.add(obj);
     }
-
+    remove(obj){
+        this._scene.remove(obj);
+    }
     controlsUpdate(){
 
         this.controls.update();
@@ -151,7 +153,7 @@ class hx_Scene {
             }
 
             if(this.hx_scene.points['A'] != null){
-                $('#confirm_move').show();
+                $('#confirm_move').toggle();
                 $('#confirm_move').css({
                     top: event.pageY-$('#confirm_move').height() + "px",
                     left:  event.pageX + "px",
