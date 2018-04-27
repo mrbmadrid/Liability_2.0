@@ -22,8 +22,13 @@ $(document).ready(function(){
 	chatSocket.onmessage = function (e) {
 		var data = JSON.parse(e.data);
 		var message = data['message'];
-		// document.querySelector('#chat-div').append(message + '\n');
-		document.querySelector('#chat-log').value += (message + '\n');
+		var username= data['username'];
+		console.log(data);
+		console.log(username);
+		// var user = data['user'];
+		// document.querySelector('#chat-log').value += (user);
+		// document.querySelector('#chat-log').value += (message + '\n');
+		$('#chat-log').append("<span class='username'>" + username + "</span><span class='messages'>" + message + "</span><br>");
 	};
 
 	chatSocket.onclose = function (e) {
@@ -40,9 +45,12 @@ $(document).ready(function(){
 	document.querySelector('#chat-message-submit').onclick = function (e) {
 		var messageInputDom = document.querySelector('#chat-message-input');
 		var message = messageInputDom.value;
-		// console.log($('#user_id').val());
+		// console.log($('#user_name').val());
+		var user = $('#user_name').val();
+		// console.log(user);
 		chatSocket.send(JSON.stringify({
-			'message': $('#user_name').val() + ': ' + message
+			'user':user + ': ',
+			'message': message,
 		}));
 
 		messageInputDom.value = '';
@@ -55,7 +63,7 @@ function updateGames(){
   		$("#player_games").html("")
   		for(key in res['games']){
   			$("#player_games").append(
-  				 "<div class='row'><div class='col-sm-8'><a href='/joingame/"+key+"'>"+res['games'][key]['name']+"</a></div><div class='col-sm-2'>"+ res['games'][key]['turn'] +
+  				 "<div class='row games'><div class='col-sm-8'><a href='/loadgame/"+key+"'>"+res['games'][key]['name']+"</a></div><div class='col-sm-2 turn_num'>"+ res['games'][key]['turn'] +
   				 "</div></div>"
   				)
   		}
