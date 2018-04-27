@@ -28,7 +28,7 @@ $(document).ready(function(){
 		// var user = data['user'];
 		// document.querySelector('#chat-log').value += (user);
 		// document.querySelector('#chat-log').value += (message + '\n');
-		$('#chat-log').append("<span class='username'>" + username + ": </span><span class='messages'>" + message + "</span><br>");
+		$('#chat-log').append("<span class='username'>" + username + "</span><span class='messages'>" + message + "</span><br>");
 	};
 
 	chatSocket.onclose = function (e) {
