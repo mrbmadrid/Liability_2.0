@@ -165,6 +165,16 @@ def get_game_data(request):
 	return redirect(lobby)
 
 def load_game(request, game_id):
+	user = User.objects.get(id=request.session['id'])
+	game = Game.objects.filter(id=game_id)
+	profile = Player_Profile.objects.filter(player_id=request.session['id'], game_id=game_id)
+	print(profile)
+	if(len(game) == 1 and len(profile) < 1):
+		game = game.first()
+		spawn = game.spawn_locations.split('_')[0]
+		game.spawn_locations = game.spawn_locations[len(spawn)+1:len(game.spawn_locations)]
+		game.save()
+		Player_Profile.objects.create(game=game, player=user, pos=spawn, account_balance=500000)	
 	context = {
 		"game_id":game_id
 	}
@@ -182,16 +192,16 @@ def create_game_data(request):
 	print('create game data')
 	user = User.objects.get(id=request.session['id'])
 	data = json.loads(request.body)
-	game = Game.objects.create(created_by=user,board_width=6, board_length=6, spawn_locations=data['spawns'])
+	game = Game.objects.create(created_by=user,board_width=6, board_length=6, spawn_locations=data['spawns'], num_players = 4)
 	spawn = game.spawn_locations.split('_')[0]
 	game.spawn_locations = game.spawn_locations[len(spawn)+1:len(game.spawn_locations)]
 	game.save()
 	Player_Profile.objects.create(player=user, game=game, pos=spawn, account_balance=500000)
 	for k, v in data['data'].items():
 		if v['game-data']['neighborhood']:
-			Cell.objects.create(pos=k, neighborhood=v['game-data']['neighborhood'], game=game, color=v['game-data']['color'], modified=True)
+			Cell.objects.create(pos=k, height=v['pos']['h'] ,neighborhood=v['game-data']['neighborhood'], game=game, color=v['game-data']['color'], modified=True)
 		else:
-			Cell.objects.create(pos=k, neighborhood=-1, game=game, color=v['game-data']['color'], modified=True)
+			Cell.objects.create(pos=k, height=v['pos']['h'], neighborhood=-1, game=game, color=v['game-data']['color'], modified=True)
 	return JsonResponse({'game_id':game.id})
 
 

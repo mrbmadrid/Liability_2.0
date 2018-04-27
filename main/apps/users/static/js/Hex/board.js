@@ -15,6 +15,7 @@ class hx_Board {
                 var hxTile = new hx_Tile();
                 var Tile = hxTile.tile;
                 Tile.pos = data.cells[tile].pos
+                Tile.scale.set(1,Tile.pos.h/.5,1)
                 Tile.selected = false;
                 hxTile.gamedata = {
                     'edgeCost': data.cells[tile].travel_cost,
@@ -133,6 +134,7 @@ class hx_Board {
             var visited = {};
             var size = this.neighborhoods[nh].size;
             queue.clear();
+            var height = Math.random() + .5
             while(size > 0){
                 var neighbors = hx_grid.findNeighbor(current,false,"object");
                 for(var n in neighbors){
@@ -145,8 +147,10 @@ class hx_Board {
                 if(!this.neighborhoods[nh].tiles.includes(hx_grid.grid[key]))
                     this.neighborhoods[nh].tiles.push(hx_grid.grid[key])
                 hx_grid.grid[key].hx_tile.gamedata.neighborhood = nh;
+                hx_grid.grid[key].hx_cell.Cell.pos.h = height;
                 assigned[hx_grid.grid[key]._id] = ""
                 this.Tiles[key].Tile.material.color.set(this.neighborhoods[nh].color)
+                this.Tiles[key].Tile.scale.set(1,height/.5,1);
                 this.Tiles[key].gamedata.color = this.neighborhoods[nh].color
                 size -= 1;
                 current = queue.dequeue().item;

@@ -1,3 +1,5 @@
+
+
 //Adjust AJAX calls to validate with DJANGO//
 $.ajaxSetup({ 
     beforeSend: function(xhr, settings) {
@@ -23,7 +25,6 @@ $.ajaxSetup({
     } 
 });
 //-----END-----//
-
 
 var hx_scene,hx_grid,hx_board;
 hx_scene = new hx_Scene();
@@ -77,15 +78,15 @@ function RenderGame(data){
     
     hx_scene.loader().load(
         // resource URL
-        "/static/js/json_models/truck_stop.json",
+        "/static/js/json_models/player.json",
 
         // onLoad callback
         function ( geometry ) {
-            var material = new THREE.MeshLambertMaterial( {color: 0x959595} );
+            var material = new THREE.MeshLambertMaterial( {color: 'red'} );
             var obj = new THREE.Mesh(geometry, material);
             obj.castShadow = true;
             obj.receiveShadow = true;
-            obj.scale.set(1.5,1.5,1.5);
+            obj.scale.set(.5,.5,.5);
             obj.position.set(0,.28,0);
             hx_scene.add( obj );
         },
@@ -100,7 +101,7 @@ function RenderGame(data){
             console.error( 'An error happened' );
         }
     );
-    //hx_grid.cleanup();
+    hx_grid.cleanup();
     hx_scene.add( light );
 }
 
@@ -127,6 +128,32 @@ gameLoop();
 
 //PLAYER ACTION EVEN LISTENERS//
 $('#DiceRoll').on('click', RollTheDice)
+$('#move_confirm').on('click', ConfirmMove)
+$('#move_revert').on('click', RevertMove)
+
+function RevertMove(){
+    console.log(hx_scene.get_path() ),
+    $('#confirm_move').hide();
+}
+
+function ConfirmMove(){
+    $.ajax({
+        type:'POST',
+        url: '/action',
+        data : JSON.stringify({
+            'function': 'move',
+            game_id : $('#Game_ID').val(),
+            data: hx_scene.path_hover,
+            csrfmiddlewaretoken : '{% csrf_token %}'
+        }),
+        cache: false,
+        contentType: false,
+        processData: true,
+        success: function(response){
+            console.log(response);
+        },
+    });
+}
 
 //AJAX CALL FUNCTIONS FOR PLAYER ACTION//
 function RollTheDice(){

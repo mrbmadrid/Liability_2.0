@@ -144,14 +144,14 @@
 
           <div id="gameView">
             <!-- Put box here.  -->
-            <div id="info_tile" class="">
+            <div id="info_tile" class="info_tile">
               <table>
                 <tr>
                   <td class="align-right">
                     <span style="color: #4285f4;">Neighborhood: &nbsp;</span>
                   </td>
                   <td>
-                    <span class="neighborhood">INFO</span>
+                    <span id="info_nh">INFO</span>
                   </td>
                 </tr>
                 <tr>
@@ -159,7 +159,7 @@
                     <span style="color: #e4281a">Value: &nbsp;</span>
                   </td>
                   <td>
-                    <span class="neighborhood">INFO</span>
+                    <span id="info_value">INFO</span>
                   </td>
                 </tr>
                 <tr>
@@ -167,7 +167,7 @@
                     <span style="color: #fbbc06"> Income: &nbsp; </span>
                   </td>
                   <td>
-                    <span class="neighborhood">INFO</span>
+                    <span id="info_income">INFO</span>
                   </td>
                 </tr>
                 <tr>
@@ -175,7 +175,7 @@
                     <span style="color: #007ac6"> Purchase Price: &nbsp; </span>
                   </td>
                   <td>
-                    <span class="neighborhood">INFO</span>
+                    <span id="info_price">INFO</span>
                   </td>
                 </tr>
                 <tr>
@@ -183,7 +183,7 @@
                     <span style="color: #34a852"> Rent: &nbsp; </span>
                   </td>
                   <td>
-                    <span class="neighborhood">INFO</span>
+                    <span id="info_rent">INFO</span>
                   </td>
                 </tr>
                 <tr>
@@ -191,7 +191,7 @@
                     <span style="color: #f2f300"> Toll: &nbsp; </span>
                   </td>
                   <td>
-                    <span class="neighborhood">INFO</span>
+                    <span id="info_toll">INFO</span>
                   </td>
                 </tr>
                 <tr>
@@ -199,12 +199,24 @@
                     <span style="color: #4285f4"> Owner: &nbsp; </span>
                   </td>
                   <td>
-                    <span class="neighborhood">INFO</span>
+                    <span id="info_owner">INFO</span>
                   </td>
                 </tr>
               </table>
               <button type="button" name="purchase" class="purchase_button">PURCHASE!</button>
             </div>
+
+            <div id="confirm_move" class="info_tile">
+                <table>
+                    <tr>
+                    <td class="align-right">
+                        <span style="color: white;"> Confirm Move? &nbsp;</span>
+                    </td>
+                    </tr>
+                </table>
+                <button type="button" name="purchase" id="move_confirm" class="confirm_button">Yes!</button>
+                <button type="button" name="purchase" id="move_revert" class="revert_button">No!</button>
+                </div>
             <!-- Whoa -->
 
           </div>
@@ -218,7 +230,6 @@
 
       <!-- Javascript -->
       <!-- Why aren't we using jq 3.3.1? -->
-      <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
       <script src="{% static 'bootstrap-4.1.0-dist/js/bootstrap.min.js' %}"></script>
       <script src="{% static 'js/jquery.backstretch.min.js' %}"></script>
     <!-- Where Brian, Robert, and Key read an unessisary comment. -->

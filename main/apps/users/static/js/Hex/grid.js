@@ -81,6 +81,7 @@ class hx_Grid {
             }
             stripped_grid[key] = info;
         }
+        console.log(stripped_grid);
         return stripped_grid;
     }
 
@@ -234,16 +235,19 @@ class hx_Grid {
     }
 
     heuristic(h,w1,w2,cost){
-        h += h * w1;
+        h = h * w1;
         var c = cost * w2;
         return h + c;
     }
 
     calculateDistance(A,B){
-
+        A[0] = parseFloat(A[0])
+        A[1] = parseFloat(A[1])
+        B[0] = parseFloat(B[0])
+        B[1] = parseFloat(B[1])
         var posA = this.offset_to_cube(A);
         var posB = this.offset_to_cube(B);
-        //console.log(posA)
+
         return this.findDistance(posA, posB)
     }
 
@@ -261,7 +265,7 @@ class hx_Grid {
         return {
             'x':x,
             'y':y,
-            'z':z
+            'z':parseFloat(z)
         }
     }
 
