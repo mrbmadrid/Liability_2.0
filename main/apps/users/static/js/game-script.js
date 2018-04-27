@@ -80,7 +80,7 @@ function RenderGame(data){
     hx_scene.add( light );
 
     loadPlayers(data);
-    loadBuildings(data);
+    //loadBuildings(data);
 }
 
 
@@ -103,7 +103,6 @@ var gameLoop = function(){
 };
 
 gameLoop();
-
 
 
 function loadPlayers(data){
