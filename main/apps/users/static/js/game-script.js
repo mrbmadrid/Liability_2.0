@@ -1,3 +1,5 @@
+
+
 //Adjust AJAX calls to validate with DJANGO//
 $.ajaxSetup({ 
     beforeSend: function(xhr, settings) {
@@ -23,7 +25,6 @@ $.ajaxSetup({
     } 
 });
 //-----END-----//
-
 
 var hx_scene,hx_grid,hx_board;
 hx_scene = new hx_Scene();
@@ -75,34 +76,13 @@ function RenderGame(data){
     var pointLightHelper = new THREE.PointLightHelper( light, sphereSize );
     //hx_scene.add( pointLightHelper );
     
-    hx_scene.loader().load(
-        // resource URL
-        "/static/js/json_models/truck_stop.json",
-
-        // onLoad callback
-        function ( geometry ) {
-            var material = new THREE.MeshLambertMaterial( {color: 0x959595} );
-            var obj = new THREE.Mesh(geometry, material);
-            obj.castShadow = true;
-            obj.receiveShadow = true;
-            obj.scale.set(1.5,1.5,1.5);
-            obj.position.set(0,.28,0);
-            hx_scene.add( obj );
-        },
-
-        // onProgress callback
-        function ( xhr ) {
-            console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-        },
-
-        // onError callback
-        function ( err ) {
-            console.error( 'An error happened' );
-        }
-    );
-    //hx_grid.cleanup();
+    hx_grid.cleanup();
     hx_scene.add( light );
+
+    loadPlayers(data);
+    loadBuildings(data);
 }
+
 
 //game logic is handled in update loop
 var update = function(){
@@ -125,8 +105,97 @@ var gameLoop = function(){
 gameLoop();
 
 
+
+function loadPlayers(data){
+        hx_scene.loader().load(
+            // resource URL
+            "/static/js/json_models/player.json",
+    
+            // onLoad callback
+            function ( geometry ) {
+    
+                var loader = new THREE.FontLoader();
+                loader.load( 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/helvetiker_bold.typeface.json', function ( font ) {
+                
+                var options =  {
+                
+                        font: font,
+                    
+                        size: .5,
+                        height: .1,
+                        curveSegments: 12,
+        
+                    
+                      }
+                
+                  var textMaterial = new THREE.MeshPhongMaterial( 
+                    { color: 0xff0000, specular: 0xffffff }
+                  );
+                
+                  for(var p in data.players){
+                    var textGeometry = new THREE.TextGeometry( data.players[p].name, options);
+                    var text = new THREE.Mesh( textGeometry, textMaterial );
+                    var material = new THREE.MeshLambertMaterial( {color: 'red'} );
+                    var obj = new THREE.Mesh(geometry, material);                 
+                    obj.add(text)
+                    text.position.set(0,2,0);
+                    text.lookAt( hx_scene.camera.position );
+                    obj.castShadow = true;
+                    obj.receiveShadow = true;
+                    obj.scale.set(.5,.5,.5);
+                    console.log(data.players[p],p)
+                    var cords = data.players[p].pos.split(",")
+                    var y = hx_grid.grid[data.players[p].pos].hx_cell.Cell.pos.h
+                    var tile_pos = hx_board.board[data.players[p].pos].Tile.position
+                    console.log(tile_pos)
+                    obj.position.set(tile_pos.x,y,tile_pos.z);
+                    hx_scene.add( obj );
+                  }
+                }); 
+    
+            },
+    
+            // onProgress callback
+            function ( xhr ) {
+                console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+            },
+    
+            // onError callback
+            function ( err ) {
+                console.error( 'An error happened' );
+            }
+        );
+}
+
+
 //PLAYER ACTION EVEN LISTENERS//
 $('#DiceRoll').on('click', RollTheDice)
+$('#move_confirm').on('click', ConfirmMove)
+$('#move_revert').on('click', RevertMove)
+
+function RevertMove(){
+    console.log(hx_scene.get_path() ),
+    $('#confirm_move').hide();
+}
+
+function ConfirmMove(){
+    $.ajax({
+        type:'POST',
+        url: '/action',
+        data : JSON.stringify({
+            'function': 'move',
+            game_id : $('#Game_ID').val(),
+            data: hx_scene.path_hover,
+            csrfmiddlewaretoken : '{% csrf_token %}'
+        }),
+        cache: false,
+        contentType: false,
+        processData: true,
+        success: function(response){
+            console.log(response);
+        },
+    });
+}
 
 //AJAX CALL FUNCTIONS FOR PLAYER ACTION//
 function RollTheDice(){
@@ -144,6 +213,8 @@ function RollTheDice(){
         success: function(response){
             console.log(response);
             hx_scene.roll(parseInt(response.roll));
+            var cords = response.pos.split(",")
+            hx_scene.points['A'] = [parseInt(cords[0]),parseInt(cords[1])];
         },
     });
 }

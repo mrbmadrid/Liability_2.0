@@ -164,7 +164,35 @@ def get_game_data(request):
 		return JsonResponse(data)
 	return redirect(lobby)
 
+def game_data(game_id, session):
+	game = Game.objects.get(id=game_id)
+	p = Player_Profile.objects.filter(game_id=game_id)
+	if(len(p.filter(player_id=session['id']))):
+		c = Cell.objects.filter(game_id=game_id)
+		cells = {}
+		for cell in c:
+			cells[cell.pos] = cell.game_data()
+		players = {}
+		for player in p:
+			players[player.player.user_name] = player.game_data()
+		data = {
+		"game" : game.game_data(),
+		"cells" : cells,
+		"players" : players
+		}
+		return data
+
 def load_game(request, game_id):
+	user = User.objects.get(id=request.session['id'])
+	game = Game.objects.filter(id=game_id)
+	profile = Player_Profile.objects.filter(player_id=request.session['id'], game_id=game_id)
+	print(profile)
+	if(len(game) == 1 and len(profile) < 1):
+		game = game.first()
+		spawn = game.spawn_locations.split('_')[0]
+		game.spawn_locations = game.spawn_locations[len(spawn)+1:len(game.spawn_locations)]
+		game.save()
+		Player_Profile.objects.create(game=game, player=user, pos=spawn, account_balance=500000)	
 	context = {
 		"game_id":game_id
 	}
@@ -182,16 +210,16 @@ def create_game_data(request):
 	print('create game data')
 	user = User.objects.get(id=request.session['id'])
 	data = json.loads(request.body)
-	game = Game.objects.create(created_by=user,board_width=6, board_length=6, spawn_locations=data['spawns'])
+	game = Game.objects.create(created_by=user,board_width=6, board_length=6, spawn_locations=data['spawns'], num_players = 4)
 	spawn = game.spawn_locations.split('_')[0]
 	game.spawn_locations = game.spawn_locations[len(spawn)+1:len(game.spawn_locations)]
 	game.save()
 	Player_Profile.objects.create(player=user, game=game, pos=spawn, account_balance=500000)
 	for k, v in data['data'].items():
 		if v['game-data']['neighborhood']:
-			Cell.objects.create(pos=k, neighborhood=v['game-data']['neighborhood'], game=game, color=v['game-data']['color'], modified=True)
+			Cell.objects.create(pos=k, height=v['pos']['h'] ,neighborhood=v['game-data']['neighborhood'], game=game, color=v['game-data']['color'], q_1=v['game-data']['children']['buildings'][0], q_2=v['game-data']['children']['buildings'][1], q_3=v['game-data']['children']['buildings'][2], q_4=v['game-data']['children']['buildings'][3], modified=True)
 		else:
-			Cell.objects.create(pos=k, neighborhood=-1, game=game, color=v['game-data']['color'], modified=True)
+			Cell.objects.create(pos=k, height=v['pos']['h'], neighborhood=-1, game=game, color=v['game-data']['color'], q_1=v['game-data']['children']['buildings'][0], q_2=v['game-data']['children']['buildings'][1], q_3=v['game-data']['children']['buildings'][2], q_4=v['game-data']['children']['buildings'][3], modified=True)
 	return JsonResponse({'game_id':game.id})
 
 
@@ -210,7 +238,7 @@ def action(request):
 			move = random.randint(1, 6)
 			profile.turn = str(move)+str(game.turn)
 			profile.save()
-			return JsonResponse({"roll":str(move)})
+			return JsonResponse({"roll":str(move),"pos": profile.pos})
 			#return JsonResponse({"roll": "You already rolled."})
 		else:
 			move = random.randint(1, 6)
@@ -222,6 +250,12 @@ def action(request):
 	elif data['function'] == 'upgrade':
 		return HttpResponse("Upgrade")
 	elif data['function'] == 'move':
-		return HttpResponse("Move")
+		#Add code to validate move (make sure cells are connected)
+		pos = data['data'][len(data['data'])-1]
+		profile.pos = str(pos[0])+","+str(pos[1])
+		profile.save()
+		return JsonResponse(game_data(game.id, request.session))
+	elif data['function'] == 'end':
+		return HttpResponse("End Turn")
 
 

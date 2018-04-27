@@ -75,12 +75,13 @@ class hx_Grid {
             }
             info = {
                 'pos':pos,
-                'neighbors': nh,
+                'neighbors': nh(),
                 'game-data':gamedata,
                 'id':id
             }
             stripped_grid[key] = info;
         }
+        console.log(stripped_grid);
         return stripped_grid;
     }
 
@@ -187,7 +188,6 @@ class hx_Grid {
         if(key == keyB){return;}
         while(PQ.empty() == false){
             var runner = PQ.pop();
-            console.log(runner.item, B);
 
             if(runner.item == B)
                 break;
@@ -199,21 +199,18 @@ class hx_Grid {
             for(var n in neighbors){
                 var n_key = String(neighbors[n].hx_cell.Cell.pos.x) + "," + String(neighbors[n].hx_cell.Cell.pos.y) 
                 var new_cost = cost_so_far[key]  + this.nodeCost(key, n_key) 
-
                 if (cost_so_far.hasOwnProperty(n_key) == false || new_cost < cost_so_far[n_key]){
                     cost_so_far[n_key] = new_cost;
                     var pos = [neighbors[n].hx_cell.Cell.pos.x, neighbors[n].hx_cell.Cell.pos.y]
                     var h = this.heuristic( this.calculateDistance(pos, B), greedyWeight, dijkstrasWeight, this.nodeCost(key, n_key));
                     var priority = new_cost + h;  //f(n) = g(n) + h(n)
-                    //console.log(pos)
                     PQ.push(pos,priority);
                     came_from[n_key] = runner.item;
                 }
             }
         }
-        console.log(came_from);
         var path = this.reconstruct_path(came_from,A,B);
-        console.log(path);
+        console.log(cost_so_far[keyB]);
         return path;
     }
 
@@ -234,21 +231,23 @@ class hx_Grid {
 
     nodeCost(A,B){
         //console.log(A,B);
-        return this.cells[A].hx_tile.gamedata.edgeCost + this.cells[B].hx_tile.gamedata.edgeCost;
+        return (this.cells[A].hx_tile.gamedata.edgeCost + this.cells[B].hx_tile.gamedata.edgeCost)/100;
     }
 
     heuristic(h,w1,w2,cost){
-        //console.log(h,w1,w2,cost);
-        h += h * w1;
+        h = h * w1;
         var c = cost * w2;
         return h + c;
     }
 
     calculateDistance(A,B){
-
+        A[0] = parseFloat(A[0])
+        A[1] = parseFloat(A[1])
+        B[0] = parseFloat(B[0])
+        B[1] = parseFloat(B[1])
         var posA = this.offset_to_cube(A);
         var posB = this.offset_to_cube(B);
-        //console.log(posA)
+
         return this.findDistance(posA, posB)
     }
 
@@ -266,7 +265,7 @@ class hx_Grid {
         return {
             'x':x,
             'y':y,
-            'z':z
+            'z':parseFloat(z)
         }
     }
 

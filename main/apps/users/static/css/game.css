@@ -56,7 +56,7 @@ form{
     text-align: center;
 }
 
-#info_tile{
+.info_tile{
   padding: 4px 10px 4px 2px;
   position: absolute;
   display: block;
@@ -67,6 +67,7 @@ form{
   min-height: 100px;
   min-width: 100px;
   box-shadow: 0px 0px 20px black;
+  display: none;
 }
 
 #info_tile tr{
@@ -106,15 +107,45 @@ form{
 }
 
 .sidenav a {
+    display: block;
     border-radius: 5px;
     margin: 8px 32px 8px 32px;
     text-decoration: none;
     font-size: 25px;
     color: lightgray;
     text-align: center;
+  }
+
+.revert_button{
+    vertical-align: top;
+    display: block;
+    border: none;
+    border-radius: 3px;
+    margin: 5px auto;
+    background-color: #e6650f;
+    color: white;
+    font-weight: bolder;
+  }
+
+.confirm_button{
+    vertical-align: top;
+    display: block;
+    border: none;
+    border-radius: 3px;
+    margin: 5px auto;
+    background-color: #16e60f;
+    color: white;
+    font-weight: bolder;
+}
+
+.confirm_button:hover, .revert_button:hover, .purchase_button:hover{
+    color: #6d7fcc;
+}
+/* sidebar_bar */
+/* .BARwrapper {
     display: block;
     transition: 0.3s;
-}
+} */
 
 .sidenav .forsale{
     background-color: #f2f300;
@@ -131,14 +162,6 @@ form{
 .sidenav a:hover {
     color: #f1f1f1;
     box-shadow: 0px 0px 13px rgba(255,255,0,0.3;
-}
-
-.sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
 }
 
 @media screen and (max-height: 450px) {
