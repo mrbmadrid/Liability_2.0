@@ -6,6 +6,23 @@ class hx_Board {
         this.MaxLength = MaxLength;
         this.MaxWidth = MaxWidth;
         this.Offset = Offset;
+        this.spawned_buildings = [];
+        this.models_to_load = {
+            'apartments': "/static/js/json_models/apartment_building.json",
+            /*'assemblyPlant': "/static/js/json_models/assembly_plant.json",
+            'corpHQ': "/static/js/json_models/corporate_hq.json",
+            'distrobutionCenter': "/static/js/json_models/distrobution_center.json",
+            'forSale': "/static/js/json_models/for_sale.json",
+            'hotel': "/static/js/json_models/hotel.json",
+            'housingDev': "/static/js/json_models/housing_development.json",
+            'luxuryCondos': "/static/js/json_models/luxury_condos.json",
+            'manufacturingPlant': "/static/js/json_models/manufacturing_plant.json",
+            'outletMall': "/static/js/json_models/outlet_mall.json",
+            'powerPlant': "/static/js/json_models/power_plant.json",
+            'prison': "/static/js/json_models/prison.json",
+            'trailerPark': "/static/js/json_models/trailer_park.json",
+            'truckStop': "/static/js/json_models/truck_stop.json",*/
+        };
     }
 
     generate(data){
@@ -129,13 +146,15 @@ class hx_Board {
     sectionNeighborhoods(queue, sideLength){
         var current = {x:0,y:0,h:0.5};
         var assigned = {};
-
+        var buildings = ['apartments']//,'assemblyPlant','corpHQ','distrobutionCenter','forSale','hotel','housingDev',
+        //'luxuryCondos','manufacturingPlant','outletMall','powerPlant','prison','trailerPark','truckStop']
         for(var nh=0; nh < this.neighborhoods.length;nh++){
             var visited = {};
             var size = this.neighborhoods[nh].size;
             queue.clear();
             var height = Math.random() + .5
             while(size > 0){
+                var has_buildings = Math.floor(Math.random() * 9);
                 var neighbors = hx_grid.findNeighbor(current,false,"object");
                 for(var n in neighbors){
                     if(!(neighbors[n]._id in visited) && !(neighbors[n]._id in assigned) ){
@@ -146,6 +165,7 @@ class hx_Board {
                 var key = String(current.x) + "," + String(current.y)
                 if(!this.neighborhoods[nh].tiles.includes(hx_grid.grid[key]))
                     this.neighborhoods[nh].tiles.push(hx_grid.grid[key])
+
                 hx_grid.grid[key].hx_tile.gamedata.neighborhood = nh;
                 hx_grid.grid[key].hx_cell.Cell.pos.h = height;
                 assigned[hx_grid.grid[key]._id] = ""
@@ -174,6 +194,35 @@ class hx_Board {
         }
     }
     
+    loadmodel(path, func, tile){
+        // instantiate a loader
+        var loader = new THREE.JSONLoader();
+
+        // load a resource
+        loader.load(
+            // resource URL
+            path,
+
+            // onLoad callback
+            function ( geometry, materials ) {
+                var material = materials[ 0 ];
+                var object = new THREE.Mesh( geometry, material );
+                scene.add( object );
+            },
+
+            // onProgress callback
+            function ( xhr ) {
+                console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+            },
+
+            // onError callback
+            function( err ) {
+                console.log( 'An error happened' );
+            }
+        );        
+
+    }
+
     add(hxTile){
         var key, pos;
         pos = hxTile.Tile.pos;
