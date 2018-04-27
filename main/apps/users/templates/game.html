@@ -7,42 +7,221 @@
     <title>Liability</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
+    <!-- CSS -->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+    <link rel="stylesheet" href="{% static 'bootstrap-4.1.0-dist/css/bootstrap.min.css'%}">
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/game.css' %}">
 
-    
+    <script src="{% static 'js/jquery-3.3.1.min.js'%}"></script>
+    <!-- JS FOR SIDENAV -->
+    <script type="text/javascript">
+      $('document').ready(function () {
+        // when opening the sidebar
+        $('document').on('click', '#sidebarCollapse', function(){
+          $('#sidebar').addClass('active');
+          $('.collapse.in').toggleClass('in');
+          $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        })
+        $('#sidebarCollapse').on('click', function () {
+          // open sidebar
+          $('#sidebar').addClass('active');
+          $('.collapse.in').toggleClass('in');
+          $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+        // if dismiss or overlay was clicked
+        $('document').on('click', '#dismiss', function(){
+          // hide the sidebar
+          $('#sidebar').removeClass('active');
+        })
+        $('#dismiss').on("click", function () {
+          // hide the sidebar
+          $('#sidebar').removeClass('active');
+          // fade out the overlay
+          // $('.overlay').fadeOut();
+        });
+      });
+    </script>
+
+
 
 </head>
 <body>
     {% csrf_token %}
-    <input type="hidden" id = "Game_ID" value="{{game_id}}">
-    <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
-    <script src="{% static 'js/ThreeJS/three.js' %}"></script>
-    <script src="{% static 'js/ThreeJS/OrbitControls.js' %}"></script>
+      <!-- <form action="/logout">
+          <input type="submit" value="Logout">
+      </form> -->
 
-    <script src="{% static 'js/Hex/SLL.js' %}"></script>
-    <script src="{% static 'js/Hex/heap.js' %}"></script>
-    <script src="{% static 'js/Hex/priorityQueue.js' %}"></script>
-    <script src="{% static 'js/Hex/scene.js' %}"></script>
-    <script src="{% static 'js/Hex/grid.js' %}"></script>
-    <script src="{% static 'js/Hex/board.js' %}"></script>
-    <script src="{% static 'js/Hex/cell.js' %}"></script>
-    <script src="{% static 'js/Hex/tile.js' %}"></script>
+      <!-- navbar starts here -->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#"><img src="{% static 'img/logos/logo-xs-2.png' %}"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="wrapper">
-        
-        <div id="gameView">
-                
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Liability <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/lobby">Lobby</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle dropdown-menu-left pull-left" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{request.session.user_name}}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#">Profile</a>
+                  <a class="dropdown-item" href="#">Settings</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/logout">Logout</a>
+                </div>
+              </li>
+          </ul>
         </div>
-        <div class="controls">
-            <form action="/logout">
-                <input type="submit" value="Logout">
-            </form>
-            <button id="DiceRoll">Dice Roll</button>
-        </div>
+        <!-- <img class="user_icon" src="{% static 'img/logos/flat.jpg' %}"> -->
+      </nav>
 
-    <script src="{% static 'js/game-script.js' %}"></script>
-    
-    </div>
+      <!-- navbar attempt -->
+      <nav id="sidebar">
+          <!-- Close Sidebar Button -->
+          <div id="dismiss">
+            <p>X</p>
+              <!-- <i class="glyphicon glyphicon-arrow-left"></i> -->
+          </div>
+
+          <!-- Sidebar Header -->
+          <div class="sidebar-header">
+              <h3>Collapsible Sidebar</h3>
+          </div>
+
+          <!-- Sidebar Links -->
+          <ul class="list-unstyled components">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#">About</a></li>
+              <li><!-- Link with dropdown items -->
+                  <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false">Pages</a>
+                  <ul class="collapse list-unstyled" id="homeSubmenu">
+                      <li><a href="#">Page</a></li>
+                      <li><a href="#">Page</a></li>
+                      <li><a href="#">Page</a></li>
+                  </ul>
+              <li><a href="#">Portfolio</a></li>
+              <li><a href="#">Contact</a></li>
+          </ul>
+      </nav>
+
+      <div id="content">
+          <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
+              <i class="glyphicon glyphicon-align-left"></i>
+              Toggle Sidebar
+          </button>
+      </div>
+
+
+      <!-- attempt complete -->
+      <!-- Where the game view begins, kind of. -->
+      <div id="view"></div>
+      <input type="hidden" id = "Game_ID" value="{{game_id}}">
+      <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+      <script src="{% static 'js/ThreeJS/three.js' %}"></script>
+      <script src="{% static 'js/ThreeJS/OrbitControls.js' %}"></script>
+
+      <script src="{% static 'js/Hex/SLL.js' %}"></script>
+      <script src="{% static 'js/Hex/heap.js' %}"></script>
+      <script src="{% static 'js/Hex/priorityQueue.js' %}"></script>
+      <script src="{% static 'js/Hex/scene.js' %}"></script>
+      <script src="{% static 'js/Hex/grid.js' %}"></script>
+      <script src="{% static 'js/Hex/board.js' %}"></script>
+      <script src="{% static 'js/Hex/cell.js' %}"></script>
+      <script src="{% static 'js/Hex/tile.js' %}"></script>
+      <!-- Where the game view actually ends. -->
+
+      <div class="wrapper">
+
+          <div id="gameView">
+            <!-- Put box here.  -->
+            <div id="info_tile" class="">
+              <table>
+                <tr>
+                  <td class="align-right">
+                    <span style="color: #4285f4;">Neighborhood: &nbsp;</span>
+                  </td>
+                  <td>
+                    <span class="neighborhood">INFO</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="align-right">
+                    <span style="color: #e4281a">Value: &nbsp;</span>
+                  </td>
+                  <td>
+                    <span class="neighborhood">INFO</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="align-right">
+                    <span style="color: #fbbc06"> Income: &nbsp; </span>
+                  </td>
+                  <td>
+                    <span class="neighborhood">INFO</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="align-right">
+                    <span style="color: #007ac6"> Purchase Price: &nbsp; </span>
+                  </td>
+                  <td>
+                    <span class="neighborhood">INFO</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="align-right">
+                    <span style="color: #34a852"> Rent: &nbsp; </span>
+                  </td>
+                  <td>
+                    <span class="neighborhood">INFO</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="align-right">
+                    <span style="color: #f2f300"> Toll: &nbsp; </span>
+                  </td>
+                  <td>
+                    <span class="neighborhood">INFO</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="align-right">
+                    <span style="color: #4285f4"> Owner: &nbsp; </span>
+                  </td>
+                  <td>
+                    <span class="neighborhood">INFO</span>
+                  </td>
+                </tr>
+              </table>
+              <button type="button" name="purchase" class="purchase_button">PURCHASE!</button>
+            </div>
+            <!-- Whoa -->
+
+          </div>
+          <div class="controls">
+              <button id="DiceRoll">Dice Roll</button>
+          </div>
+
+      <script src="{% static 'js/game-script.js' %}"></script>
+
+      </div>
+
+      <!-- Javascript -->
+      <!-- Why aren't we using jq 3.3.1? -->
+      <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+      <script src="{% static 'bootstrap-4.1.0-dist/js/bootstrap.min.js' %}"></script>
+      <script src="{% static 'js/jquery.backstretch.min.js' %}"></script>
+    <!-- Where Brian, Robert, and Key read an unessisary comment. -->
+
 </body>
 </html>
