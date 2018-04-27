@@ -61,42 +61,59 @@
             <!-- Main content area -->
             <div class="row">
                 <div class="col-md-8 col-sm-12" id="chat">
-                    <textarea id="chat-log" readonly></textarea>
+                    <div id='chat-log'>
+
+                    </div>
+                    <!-- <textarea id="chat-log" readonly></textarea> -->
                     <br/>
-                    <input id="chat-message-input" type="text" />
-                    <!-- <br/> -->
-                    <input id="chat-message-submit" type="button" value="Send" />
+                    <div id='chat-div' class='container'>
+                        <div class='row'>
+                            <div class='col-sm-10 col-xs-12'>
+                                <input id="chat-message-input" type="text" />
+                            </div>
+                            <!-- <br/> -->
+                            <div class='col-sm-2 col-xs-12'>
+                                <input id="chat-message-submit" type="button" value="Send" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-4 col-sm-12" id="right_info_pane">
                     <!-- Updates -->
                     <div class="row" id="updates">
-                        <div class=col>
+                        <div class="col">
                              <div class="row">
                                 <div class="col">
-                                    <h3>Updates</h3>
+                                    <h3>Updates:</h3>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col">
+                                <div class="col updates">
                                     <ul>
                                         <li>Jerome Passed his belt exam</li>
                                         <li>Tim has an unhealthy obsession with Brian</li>
                                         <li>I'm tired of ramen</li>
+                                        <li>Team RamRod</li>
+                                        <li>Everyone got black belts</li>
+                                        <li>boom another item</li>
+                                        <li>boom another item</li>
+                                        <li>boom another item</li>
+                                        <li>shakalaka another item</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col joined_games">
                             <div class="row">
                                 <div class="col">
-                                    <h3>Joined Games</h3>
+                                    <h3>Joined Games:</h3>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-8">Game Name</div>
-                                <div class="col-sm-2">Turn</div>
+                                <div class="col-sm-8" id='game_name'>Game Name</div>
+                                <div class="col-sm-2" id='turn'>Turn</div>
                             </div>
                             <div id="player_games"></div>
                         </div>

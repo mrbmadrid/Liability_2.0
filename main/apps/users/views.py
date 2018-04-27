@@ -224,6 +224,4 @@ def action(request):
 	elif data['function'] == 'move':
 		return HttpResponse("Move")
 
-	
-
 
