@@ -232,6 +232,11 @@ def action(request):
 	elif data['function'] == 'upgrade':
 		return HttpResponse("Upgrade")
 	elif data['function'] == 'move':
+		#Add code to validate move (make sure cells are connected)
+		pos = data['data'][len(data['data'])-1]
+		profile.pos = str(pos[0])+","+str(pos[1])
+		profile.save()
+		print(data)
 		return HttpResponse("Move")
 	elif data['function'] == 'end':
 		return HttpResponse("End Turn")
