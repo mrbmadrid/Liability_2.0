@@ -199,9 +199,9 @@ def create_game_data(request):
 	Player_Profile.objects.create(player=user, game=game, pos=spawn, account_balance=500000)
 	for k, v in data['data'].items():
 		if v['game-data']['neighborhood']:
-			Cell.objects.create(pos=k, height=v['pos']['h'] ,neighborhood=v['game-data']['neighborhood'], game=game, color=v['game-data']['color'], modified=True)
+			Cell.objects.create(pos=k, height=v['pos']['h'] ,neighborhood=v['game-data']['neighborhood'], game=game, color=v['game-data']['color'], q_1=v['game-data']['children']['buildings'][0], q_2=v['game-data']['children']['buildings'][1], q_3=v['game-data']['children']['buildings'][2], q_4=v['game-data']['children']['buildings'][3], modified=True)
 		else:
-			Cell.objects.create(pos=k, height=v['pos']['h'], neighborhood=-1, game=game, color=v['game-data']['color'], modified=True)
+			Cell.objects.create(pos=k, height=v['pos']['h'], neighborhood=-1, game=game, color=v['game-data']['color'], q_1=v['game-data']['children']['buildings'][0], q_2=v['game-data']['children']['buildings'][1], q_3=v['game-data']['children']['buildings'][2], q_4=v['game-data']['children']['buildings'][3], modified=True)
 	return JsonResponse({'game_id':game.id})
 
 
