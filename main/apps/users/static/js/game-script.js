@@ -146,6 +146,7 @@ function loadPlayers(data){
                     var cords = data.players[p].pos.split(",")
                     var y = hx_grid.grid[data.players[p].pos].hx_cell.Cell.pos.h
                     var tile_pos = hx_board.board[data.players[p].pos].Tile.position
+                    hx_board.board[data.players[p].pos].gamedata.children.players.push(obj);
                     console.log(tile_pos)
                     obj.position.set(tile_pos.x,y,tile_pos.z);
                     hx_scene.add( obj );
@@ -166,18 +167,31 @@ function loadPlayers(data){
         );
 }
 
+function unloadPlayers(res){
+        for(var p in res.data.players){
+            for(var x = hx_board.board[res.prevPos].gamedata.children.players.length;x>0;x--){
+                console.log('test', hx_board.board[res.prevPos].gamedata)
+                var removeObj = hx_board.board[res.prevPos].gamedata.children.players.pop()
+                hx_scene.remove(removeObj)
+                
+            }
+        }
+}
+
 
 //PLAYER ACTION EVEN LISTENERS//
 $('#DiceRoll').on('click', RollTheDice)
-$('#move_confirm').on('click', ConfirmMove)
-$('#move_revert').on('click', RevertMove)
 
-function RevertMove(){
+$('#move_revert').on('click', function (event){
+    event.stopPropagation();
     console.log(hx_scene.get_path() ),
     $('#confirm_move').hide();
-}
+    return;
+});
 
-function ConfirmMove(){
+$('#move_confirm').on('click', function (event){
+
+    event.stopPropagation();
     $.ajax({
         type:'POST',
         url: '/action',
@@ -192,9 +206,13 @@ function ConfirmMove(){
         processData: true,
         success: function(response){
             console.log(response);
+            $('#confirm_move').hide();
+            unloadPlayers(response);
+            loadPlayers(response.data);
         },
     });
-}
+    return;
+});
 
 //AJAX CALL FUNCTIONS FOR PLAYER ACTION//
 function RollTheDice(){

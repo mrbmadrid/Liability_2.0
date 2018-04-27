@@ -252,9 +252,10 @@ def action(request):
 	elif data['function'] == 'move':
 		#Add code to validate move (make sure cells are connected)
 		pos = data['data'][len(data['data'])-1]
+		old_pos = profile.pos
 		profile.pos = str(pos[0])+","+str(pos[1])
 		profile.save()
-		return JsonResponse(game_data(game.id, request.session))
+		return JsonResponse({'prevPos':old_pos,'data': game_data(game.id, request.session)})
 	elif data['function'] == 'end':
 		return HttpResponse("End Turn")
 
