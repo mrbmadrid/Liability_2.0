@@ -237,7 +237,7 @@ def action(request):
 		profile.pos = str(pos[0])+","+str(pos[1])
 		profile.save()
 		print(data)
-		return JsonResponse({'result':True})
+		return redirect(get_game_data)
 	elif data['function'] == 'end':
 		return HttpResponse("End Turn")
 
