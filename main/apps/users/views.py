@@ -223,5 +223,7 @@ def action(request):
 		return HttpResponse("Upgrade")
 	elif data['function'] == 'move':
 		return HttpResponse("Move")
+	elif data['function'] == 'end':
+		return HttpResponse("End Turn")
 
 
